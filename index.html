@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>РЕШАЙ — И НИКТО НЕ ВЫЛЕТИТ</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⏱️</text></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0d11; --panel:#0e1319; --panel2:#0c1117;
+    --ink:#dce4ec; --mut:#7d8894; --line:#232c36;
+    --yellow:#ffc826; --yellow-soft:#ffdf6b;
+    --red:#ff4438; --cyan:#54c8ff; --green:#43e97b;
+    --mono:'IBM Plex Mono', monospace;
+    --disp:'Russo One', sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:var(--mono); overflow-x:hidden;
+    display:grid; grid-template-rows:auto auto 1fr auto; min-height:100vh;
+  }
+
+  .scanlines{position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.5;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 1px, transparent 1px 3px);}
+  .vignette{position:fixed;inset:0;pointer-events:none;z-index:59;
+    background:radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(0,0,0,.55) 100%);}
+  #glow{position:fixed;width:480px;height:480px;left:0;top:0;z-index:1;pointer-events:none;
+    background:radial-gradient(circle, rgba(255,200,38,.07) 0%, transparent 62%);
+    transform:translate(-50%,-50%); mix-blend-mode:screen;}
+  @media (hover:none){#glow{display:none}}
+
+  .particles{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+  .particles span{position:absolute;bottom:-8vh;font-family:var(--disp);
+    animation:rise linear infinite; will-change:transform}
+  @keyframes rise{
+    from{transform:translateY(0) rotate(-6deg)}
+    to{transform:translateY(-118vh) rotate(14deg)}
+  }
+
+  .hazard{height:6px;background:repeating-linear-gradient(135deg,#0d0f12 0 12px,var(--yellow) 12px 24px)}
+  .tape{background:var(--yellow);color:#0d0f12;overflow:hidden;border-bottom:3px solid #0d0f12}
+  .tape-track{display:flex;width:max-content;animation:slide 26s linear infinite}
+  .tape-set{display:flex;align-items:center;gap:34px;padding:6px 17px;white-space:nowrap;
+    font-family:var(--disp);font-size:12px;letter-spacing:.12em}
+  .tape-set b{font-weight:400;opacity:.55}
+  @keyframes slide{to{transform:translateX(-50%)}}
+
+  .hud{display:flex;align-items:center;justify-content:space-between;gap:18px;
+    padding:14px 26px;border-bottom:1px solid var(--line);background:rgba(10,13,17,.9);position:relative;z-index:10}
+  .hud-left{display:flex;align-items:center;gap:16px;min-width:0}
+  .emblem{flex:none;width:46px;height:46px}
+  .title{font-family:var(--disp);font-size:clamp(15px,2.1vw,23px);letter-spacing:.06em;
+    color:var(--yellow);text-shadow:0 0 22px rgba(255,200,38,.25);line-height:1.1;white-space:nowrap}
+  .title small{display:block;font-family:var(--mono);font-weight:400;font-size:10px;
+    letter-spacing:.28em;color:var(--mut);margin-top:5px}
+  .hud-right{display:flex;align-items:center;gap:12px;font-size:11px}
+  .chip{border:1px solid var(--line);padding:6px 12px;letter-spacing:.14em;color:var(--mut);white-space:nowrap}
+  .chip.rec{color:#ffb3ad;border-color:rgba(255,68,56,.4)}
+  .rec-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);
+    margin-right:8px;vertical-align:1px;animation:blink 1.1s steps(1) infinite;box-shadow:0 0 10px var(--red)}
+  .chip.clock{color:var(--yellow);font-weight:700;font-size:13px}
+  @keyframes blink{50%{opacity:.15}}
+  @media(max-width:760px){.hud-right .chip.hide-s{display:none}}
+
+  .stage{position:relative;z-index:5;display:flex;min-height:0}
+
+  .panel{position:relative;flex:1;display:flex;min-width:0;overflow:hidden;
+    background:var(--panel);transition:flex .55s cubic-bezier(.2,.8,.2,1);cursor:default}
+  .panel .grid-bg{position:absolute;inset:0;opacity:.7;pointer-events:none;
+    background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+    background-size:36px 36px}
+  .panel .tint{position:absolute;inset:0;pointer-events:none;opacity:.5;transition:opacity .4s}
+  .p1 .tint{background:radial-gradient(90% 70% at 20% 0%, rgba(255,68,56,.13), transparent 60%)}
+  .p2 .tint{background:radial-gradient(90% 70% at 80% 0%, rgba(84,200,255,.13), transparent 60%)}
+  .panel:hover .tint{opacity:1}
+  .panel::before,.panel::after{content:"";position:absolute;width:26px;height:26px;
+    transition:all .35s;z-index:4;opacity:.65}
+  .panel::before{top:12px;left:12px;border-top:2px solid;border-left:2px solid}
+  .panel::after{bottom:12px;right:12px;border-bottom:2px solid;border-right:2px solid}
+  .p1::before,.p1::after{border-color:var(--red)}
+  .p2::before,.p2::after{border-color:var(--cyan)}
+  .panel:hover::before,.panel:hover::after{width:44px;height:44px;opacity:1}
+
+  .ghost{position:absolute;bottom:-14px;right:-10px;font-family:var(--disp);
+    font-size:clamp(80px,11vw,150px);line-height:1;white-space:nowrap;pointer-events:none;
+    transform:rotate(-6deg);opacity:.045;z-index:1}
+  .p1 .ghost{color:var(--red)} .p2 .ghost{color:var(--cyan)}
+
+  .panel-inner{position:relative;z-index:3;display:flex;flex-direction:column;gap:18px;
+    padding:clamp(24px,3.4vw,48px);width:100%}
+  .panel-tag{display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:.3em;color:var(--mut)}
+  .panel-tag i{width:26px;height:1px;background:currentColor;opacity:.5}
+  .p1 .panel-tag{color:#ff8d85} .p2 .panel-tag{color:#8fd8ff}
+
+  .panel-icon{width:118px;height:118px;transition:transform .45s cubic-bezier(.2,.8,.2,1), filter .45s}
+  .p1 .panel-icon{color:#ffb3ad}
+  .p2 .panel-icon{color:#a8e0ff}
+  .p1:hover .panel-icon{transform:rotate(-3deg) scale(1.06);filter:drop-shadow(0 6px 22px rgba(255,68,56,.35))}
+  .p2:hover .panel-icon{transform:rotate(3deg) scale(1.06);filter:drop-shadow(0 6px 22px rgba(84,200,255,.35))}
+  .tick-hand{transform-origin:60px 64px;animation:sweep 6s linear infinite}
+  @keyframes sweep{to{transform:rotate(360deg)}}
+  .alarm-dot{animation:blink 1s steps(1) infinite}
+
+  .panel-name{font-family:var(--disp);font-size:clamp(26px,3.2vw,40px);letter-spacing:.05em;line-height:1}
+  .p1 .panel-name span{color:var(--red)} .p2 .panel-name span{color:var(--cyan)}
+  .panel-desc{color:#aab6c2;font-size:13px;line-height:1.75;max-width:420px}
+  .panel-rules{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:11px;color:var(--mut);letter-spacing:.06em}
+  .panel-rules b{font-weight:700;color:var(--ink)}
+  .p1 .panel-rules b{color:#ff9d96} .p2 .panel-rules b{color:#9fdcff}
+
+  .join{margin-top:auto;position:relative;display:flex;align-items:center;gap:16px;
+    width:100%;max-width:430px;padding:16px 22px 16px 0;border:none;cursor:pointer;
+    font-family:var(--disp);text-align:left;letter-spacing:.05em;text-decoration:none;
+    clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px));
+    transition:transform .18s ease, box-shadow .3s ease, filter .3s ease}
+  .join .stripe{flex:none;width:16px;align-self:stretch;
+    background:repeating-linear-gradient(135deg,#0d0f12 0 9px,currentColor 9px 18px)}
+  .join .arrow{margin-left:auto;font-family:var(--mono);font-size:18px;transition:transform .25s}
+  .join:hover .arrow{transform:translateX(7px)}
+  .join:active{transform:translateY(2px)}
+  .join:focus-visible{outline:2px dashed var(--yellow);outline-offset:5px}
+  .join-label{display:flex;flex-direction:column;gap:4px}
+  .join-label em{font-style:normal;font-family:var(--mono);font-weight:400;font-size:10px;letter-spacing:.24em;opacity:.75}
+
+  .j1{background:var(--yellow);color:#141414}
+  .j1 .stripe{color:#141414}
+  .j1:hover{box-shadow:0 10px 34px rgba(255,200,38,.35);filter:brightness(1.06)}
+  .j2{background:var(--cyan);color:#04202c}
+  .j2 .stripe{color:#04202c}
+  .j2:hover{box-shadow:0 10px 34px rgba(84,200,255,.35);filter:brightness(1.06)}
+
+  @media(hover:hover) and (min-width:901px){
+    .panel:hover{flex:1.38}
+  }
+
+  .divider{flex:none;width:232px;position:relative;background:var(--panel2);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+    padding:30px 20px;border-left:1px solid var(--line);border-right:1px solid var(--line);z-index:6}
+  .divider .edge{position:absolute;top:0;bottom:0;width:9px;
+    background:repeating-linear-gradient(135deg,#0d0f12 0 9px,var(--yellow) 9px 18px)}
+  .edge.l{left:0}.edge.r{right:0}
+
+  .dv-tag{font-size:9px;letter-spacing:.32em;color:var(--mut);text-align:center}
+  .timer-box{width:100%;border:1px solid var(--line);background:#080b0e;padding:16px 10px 14px;text-align:center;position:relative}
+  .timer-box::before{content:"";position:absolute;inset:3px;border:1px dashed rgba(255,200,38,.18);pointer-events:none}
+  .timer-label{font-size:9px;letter-spacing:.3em;color:var(--mut);margin-bottom:8px}
+  .timer-digits{font-family:var(--mono);font-weight:700;font-size:40px;color:var(--yellow);
+    text-shadow:0 0 24px rgba(255,200,38,.4);letter-spacing:.02em;transition:color .3s}
+  .timer-digits .colon{animation:blink 1s steps(1) infinite}
+  .timer-bar{height:4px;background:#1a2129;margin-top:12px;overflow:hidden}
+  .timer-bar i{display:block;height:100%;width:100%;background:var(--yellow);transition:width 1s linear, background .3s}
+  .timer-box.danger .timer-digits{color:var(--red);text-shadow:0 0 26px rgba(255,68,56,.55);animation:blink 1s steps(1) infinite}
+  .timer-box.danger .timer-bar i{background:var(--red)}
+  .timer-box.dead .timer-digits{animation:none;color:var(--red);font-size:21px;letter-spacing:.1em;text-shadow:0 0 26px rgba(255,68,56,.6)}
+
+  .leds{display:flex;flex-direction:column;gap:8px;font-size:9px;letter-spacing:.26em;color:var(--mut)}
+  .led{display:flex;align-items:center;gap:10px}
+  .led i{width:9px;height:9px;border-radius:50%}
+  .led.ok i{background:var(--green);box-shadow:0 0 10px var(--green)}
+  .led.panic i{background:var(--red);box-shadow:0 0 10px var(--red);animation:blink .7s steps(1) infinite}
+  .led.coffee i{background:var(--yellow);box-shadow:0 0 8px rgba(255,200,38,.7);animation:blink 2.6s steps(1) infinite}
+
+  .choose{font-size:10px;letter-spacing:.3em;color:var(--yellow-soft);display:flex;gap:12px;align-items:center}
+  .choose .chev{animation:nudge 1.4s ease-in-out infinite;font-family:var(--mono)}
+  .choose .chev.rt{animation-name:nudgeR}
+  @keyframes nudge{50%{transform:translateX(-5px)}}
+  @keyframes nudgeR{50%{transform:translateX(5px)}}
+
+  .dv-stamp{position:absolute;bottom:26px;left:50%;transform:translateX(-50%) rotate(-90deg);
+    transform-origin:center;font-size:8px;letter-spacing:.34em;color:var(--mut);opacity:.4;white-space:nowrap;
+    border:1px solid currentColor;padding:4px 10px}
+
+  .ticker{border-top:1px solid var(--line);background:#080b0e;overflow:hidden;position:relative;z-index:10}
+  .ticker-track{display:flex;width:max-content;animation:slide 38s linear infinite}
+  .ticker-set{display:flex;gap:44px;padding:9px 22px;white-space:nowrap;font-size:11px;letter-spacing:.1em;color:#93a0ad}
+  .ticker-set b{color:var(--yellow);font-weight:700}
+  .ticker-set .warn{color:var(--red)}
+
+  #stamp{position:fixed;inset:0;z-index:80;display:grid;place-items:center;
+    background:rgba(5,7,9,.86);opacity:0;pointer-events:none;transition:opacity .25s}
+  #stamp.show{opacity:1}
+  .stamp-card{text-align:center;padding:34px 46px;position:relative;
+    transform:rotate(-4deg) scale(2.2);opacity:0}
+  #stamp.show .stamp-card{transform:rotate(-4deg) scale(1);opacity:1;
+    transition:transform .38s cubic-bezier(.16,1.5,.3,1), opacity .2s}
+  .stamp-frame{border:4px double currentColor;padding:22px 38px}
+  .stamp-eyebrow{font-size:10px;letter-spacing:.4em;margin-bottom:12px;opacity:.8}
+  .stamp-main{font-family:var(--disp);font-size:clamp(44px,8vw,84px);letter-spacing:.06em;line-height:1}
+  .stamp-role{font-size:12px;letter-spacing:.3em;margin-top:14px}
+  .stamp-note{margin-top:22px;font-size:10px;letter-spacing:.2em;color:var(--mut)}
+  .stamp-load{height:3px;background:#1c232b;margin-top:12px;overflow:hidden}
+  .stamp-load i{display:block;height:100%;width:0;background:currentColor}
+  #stamp.show .stamp-load i{animation:load 1.3s ease-out forwards}
+  @keyframes load{to{width:100%}}
+  .st-red{color:var(--red)} .st-cyan{color:var(--cyan)}
+  body.shake{animation:shake .3s linear}
+  @keyframes shake{
+    20%{transform:translate(3px,-2px)}40%{transform:translate(-3px,2px)}
+    60%{transform:translate(2px,1px)}80%{transform:translate(-2px,-1px)}
+  }
+
+  @media(max-width:900px){
+    .stage{flex-direction:column}
+    .panel{min-height:430px}
+    .divider{width:100%;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:14px 26px;
+      padding:18px 24px;border-left:none;border-right:none;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .divider .edge{display:none}
+    .dv-stamp{display:none}
+    .timer-digits{font-size:32px}
+    .timer-box{width:auto;padding:12px 18px 12px}
+    .leds{flex-direction:row;gap:16px}
+    .ghost{font-size:70px;opacity:.04}
+    .title{white-space:normal}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.001s !important;animation-iteration-count:1 !important;transition-duration:.001s !important}
+    .particles,#glow{display:none}
+  }
+</style>
+</head>
+<body>
+
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+  <div id="glow"></div>
+  <div class="particles" id="particles"></div>
+
+  <div class="hazard"></div>
+  <div class="tape" aria-hidden="true">
+    <div class="tape-track">
+      <div class="tape-set">
+        <span>ВНИМАНИЕ: НА ЭКЗАМЕНЕ ЗАПРЕЩЕНО МОЛЧАТЬ</span><b>▲</b>
+        <span>НЕ СМОТРИТЕ В ЭКРАН НАСТАВНИКА</span><b>▲</b>
+        <span>ДЕДЛАЙН БЛИЖЕ, ЧЕМ КАЖЕТСЯ</span><b>▲</b>
+        <span>ОТВЕТЫ ОБСУЖДАЙТЕ ГОЛОСОМ</span><b>▲</b>
+        <span>ПЕРЕЭКЗАМЕНАЦИЯ — ПЛАТНАЯ</span><b>▲</b>
+      </div>
+      <div class="tape-set">
+        <span>ВНИМАНИЕ: НА ЭКЗАМЕНЕ ЗАПРЕЩЕНО МОЛЧАТЬ</span><b>▲</b>
+        <span>НЕ СМОТРИТЕ В ЭКРАН НАСТАВНИКА</span><b>▲</b>
+        <span>ДЕДЛАЙН БЛИЖЕ, ЧЕМ КАЖЕТСЯ</span><b>▲</b>
+        <span>ОТВЕТЫ ОБСУЖДАЙТЕ ГОЛОСОМ</span><b>▲</b>
+        <span>ПЕРЕЭКЗАМЕНАЦИЯ — ПЛАТНАЯ</span><b>▲</b>
+      </div>
+    </div>
+  </div>
+
+  <header class="hud">
+    <div class="hud-left">
+      <svg class="emblem" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <polygon points="24,2 44,13 44,35 24,46 4,35 4,13" stroke="#ffc826" stroke-width="2"/>
+        <polygon points="24,8 39,16 39,32 24,40 9,32 9,16" stroke="#ffc826" stroke-width="1" opacity=".35"/>
+        <path d="M16 31 L22 15 L26 26 L29 20 L32 31" stroke="#ff4438" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="24" cy="24" r="1.6" fill="#ffc826"/>
+      </svg>
+      <h1 class="title">РЕШАЙ — И НИКТО НЕ ВЫЛЕТИТ
+        <small>КООПЕРАТИВНЫЙ ЭКЗАМЕН-САПЁР · 2 ИГРОКА · ОДИН ДЕДЛАЙН</small>
+      </h1>
+    </div>
+    <div class="hud-right">
+      <span class="chip rec hide-s"><span class="rec-dot"></span>ЗАПИСЬ ВЕДЁТСЯ</span>
+      <span class="chip hide-s">АУД. 404</span>
+      <span class="chip clock" id="clock">--:--:--</span>
+    </div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ПУЛЬТ 1 -->
+    <section class="panel p1">
+      <div class="grid-bg"></div><div class="tint"></div>
+      <div class="ghost" aria-hidden="true">ВАРИАНТ 4</div>
+      <div class="panel-inner">
+        <div class="panel-tag"><i></i>ПУЛЬТ 01 · ЛИЦОМ К ТЕСТУ</div>
+        <svg class="panel-icon" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+          <path d="M28 10 H80 L96 26 V110 H28 Z" stroke="currentColor" stroke-width="2.4"/>
+          <path d="M80 10 V26 H96" stroke="currentColor" stroke-width="2.4"/>
+          <line x1="38" y1="34" x2="72" y2="34" stroke="currentColor" stroke-width="2"/>
+          <line x1="38" y1="88" x2="86" y2="88" stroke="currentColor" stroke-width="2" opacity=".6"/>
+          <line x1="38" y1="96" x2="78" y2="96" stroke="currentColor" stroke-width="2" opacity=".6"/>
+          <circle cx="60" cy="62" r="19" stroke="#ff4438" stroke-width="2.6"/>
+          <line class="tick-hand" x1="60" y1="62" x2="60" y2="49" stroke="#ff4438" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="60" cy="62" r="2.2" fill="#ff4438"/>
+          <circle class="alarm-dot" cx="90" cy="14" r="5" fill="#ff4438"/>
+        </svg>
+        <div class="panel-name">ИГРОК 1 · <span>СТУДЕНТ</span></div>
+        <p class="panel-desc">Вы сидите за партой. Перед вами тест — и он заминирован вопросами.
+          Разминировать можно только словами: мануал у напарника, времени почти нет.</p>
+        <ul class="panel-rules">
+          <li><b>▸ НЕ СМОТРЕТЬ</b> в мануал напарника</li>
+          <li><b>▸ ГОВОРИТЬ</b> постоянно, даже невпопад</li>
+          <li><b>▸ ДЕДЛАЙН</b> общий. Не успели — пересдача</li>
+        </ul>
+        <button class="join j1" data-player="1">
+          <span class="stripe"></span>
+          <span class="join-label">ВОЙТИ КАК ИГРОК 1 <em>СТУДЕНТ · ПУЛЬТ ТЕСТА</em></span>
+          <span class="arrow">▸▸</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- центр -->
+    <aside class="divider">
+      <div class="edge l"></div><div class="edge r"></div>
+      <div class="dv-tag">БОРТЖУРНАЛ<br>ФОРМА 45-Б</div>
+      <div class="timer-box" id="timerBox">
+        <div class="timer-label">ДО КОНЦА ПАРЫ</div>
+        <div class="timer-digits" id="timerDigits">45<span class="colon">:</span>00</div>
+        <div class="timer-bar"><i id="timerBar"></i></div>
+      </div>
+      <div class="leds">
+        <div class="led ok"><i></i>СВЯЗЬ</div>
+        <div class="led panic"><i></i>ПАНИКА</div>
+        <div class="led coffee"><i></i>КОФЕ</div>
+      </div>
+      <div class="choose"><span class="chev">◄◄</span>ВЫБЕРИТЕ РОЛЬ<span class="chev rt">►►</span></div>
+      <div class="dv-stamp">ПЕРЕЗАЧЁТ НЕ РАНЬШЕ ВТОРНИКА</div>
+    </aside>
+
+    <!-- ПУЛЬТ 2 -->
+    <section class="panel p2">
+      <div class="grid-bg"></div><div class="tint"></div>
+      <div class="ghost" aria-hidden="true">ГЛАВА 12</div>
+      <div class="panel-inner">
+        <div class="panel-tag"><i></i>ПУЛЬТ 02 · ЛИЦОМ К ИНСТРУКЦИИ</div>
+        <svg class="panel-icon" viewBox="0 0 120 120" fill="none" aria-hidden="true">
+          <path d="M60 26 C48 16 30 14 14 18 V96 C30 92 48 94 60 102 C72 94 90 92 106 96 V18 C90 14 72 16 60 26 Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+          <line x1="60" y1="26" x2="60" y2="102" stroke="currentColor" stroke-width="2.4"/>
+          <line x1="24" y1="34" x2="48" y2="38" stroke="currentColor" stroke-width="2" opacity=".55"/>
+          <line x1="24" y1="46" x2="48" y2="50" stroke="currentColor" stroke-width="2" opacity=".55"/>
+          <line x1="24" y1="58" x2="42" y2="61" stroke="currentColor" stroke-width="2" opacity=".55"/>
+          <text x="82" y="66" font-family="Russo One" font-size="30" fill="#54c8ff" text-anchor="middle">§</text>
+          <line x1="72" y1="80" x2="96" y2="80" stroke="currentColor" stroke-width="2" opacity=".55"/>
+        </svg>
+        <div class="panel-name">ИГРОК 2 · <span>МАНУАЛ</span></div>
+        <p class="panel-desc">У вас инструкция по разминировке тестов: главы, таблицы и сноска
+          «см. пункт 3.2». Тест вы не видите — только слушаете и направляете.</p>
+        <ul class="panel-rules">
+          <li><b>▸ НЕ СМОТРЕТЬ</b> в тест напарника</li>
+          <li><b>▸ ЦИТИРОВАТЬ</b> пункты вслух, без запятых-пауз</li>
+          <li><b>▸ УСПОКАИВАТЬ</b> по ситуации</li>
+        </ul>
+        <button class="join j2" data-player="2">
+          <span class="stripe"></span>
+          <span class="join-label">ВОЙТИ КАК ИГРОК 2 <em>МАНУАЛ · ПУЛЬТ ИНСТРУКЦИЙ</em></span>
+          <span class="arrow">▸▸</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <div class="ticker-set">
+        <span><b>ПРАВИЛО 01</b> — игрок 1 видит тест, игрок 2 видит мануал</span>
+        <span><b>ПРАВИЛО 02</b> — говорить обязательно и непрерывно</span>
+        <span><b>ПРАВИЛО 03</b> — подглядывать в чужой экран запрещено</span>
+        <span class="warn"><b>ПРАВИЛО 04</b> — паника не является аргументом</span>
+        <span>БИЛД 0.4.5-Б · ФАКУЛЬТЕТ САПЁРНЫХ НАУК</span>
+      </div>
+      <div class="ticker-set">
+        <span><b>ПРАВИЛО 01</b> — игрок 1 видит тест, игрок 2 видит мануал</span>
+        <span><b>ПРАВИЛО 02</b> — говорить обязательно и непрерывно</span>
+        <span><b>ПРАВИЛО 03</b> — подглядывать в чужой экран запрещено</span>
+        <span class="warn"><b>ПРАВИЛО 04</b> — паника не является аргументом</span>
+        <span>БИЛД 0.4.5-Б · ФАКУЛЬТЕТ САПЁРНЫХ НАУК</span>
+      </div>
+    </div>
+  </footer>
+
+  <div id="stamp" role="dialog" aria-modal="true">
+    <div class="stamp-card" id="stampCard">
+      <div class="stamp-frame">
+        <div class="stamp-eyebrow">ФОРМА 45-Б · ДОПУСК ПОДТВЕРЖДЁН</div>
+        <div class="stamp-main" id="stampMain">ИГРОК 1</div>
+        <div class="stamp-role" id="stampRole">СТУДЕНТ · ПУЛЬТ ТЕСТА</div>
+      </div>
+      <div class="stamp-load"><i></i></div>
+      <div class="stamp-note">переключение на пульт…</div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const clock = document.getElementById('clock');
+  function tickClock(){ clock.textContent = new Date().toLocaleTimeString('ru-RU'); }
+  tickClock(); setInterval(tickClock, 1000);
+
+  const TOTAL = 45*60; let t = TOTAL;
+  const box = document.getElementById('timerBox'),
+        digits = document.getElementById('timerDigits'),
+        bar = document.getElementById('timerBar');
+  function renderTimer(){
+    const m = String(Math.floor(t/60)).padStart(2,'0'),
+          s = String(t%60).padStart(2,'0');
+    digits.innerHTML = m + '<span class="colon">:</span>' + s;
+    bar.style.width = (t/TOTAL*100) + '%';
+    box.classList.toggle('danger', t < 300 && t > 0);
+  }
+  setInterval(()=>{
+    if(box.classList.contains('dead')) return;
+    t--;
+    if(t <= 0){
+      t = 0; renderTimer();
+      box.classList.add('dead');
+      digits.textContent = 'ВРЕМЯ ВЫШЛО';
+      setTimeout(()=>{ box.classList.remove('dead','danger'); t = TOTAL; renderTimer(); }, 2600);
+    } else renderTimer();
+  }, 1000);
+  renderTimer();
+
+  if(!reduced){
+    const glyphs = ['?','§','√','∑','!','π','№','x²','∞','Δ','7Б','%','ƒ(x)'];
+    const wrap = document.getElementById('particles');
+    for(let i=0;i<16;i++){
+      const s = document.createElement('span');
+      s.textContent = glyphs[i % glyphs.length];
+      s.style.left = Math.random()*100 + 'vw';
+      s.style.fontSize = (14 + Math.random()*26) + 'px';
+      s.style.color = Math.random() > .5 ? 'rgba(255,200,38,.10)' : 'rgba(84,200,255,.09)';
+      s.style.animationDuration = (15 + Math.random()*14) + 's';
+      s.style.animationDelay = (-Math.random()*20) + 's';
+      wrap.appendChild(s);
+    }
+  }
+
+  const glow = document.getElementById('glow');
+  addEventListener('pointermove', e=>{
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+  });
+
+  let actx = null, unlocked = false;
+  addEventListener('pointerdown', ()=>{
+    try{
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if(actx.state === 'suspended') actx.resume();
+      unlocked = true;
+    }catch(e){}
+  }, {once:true});
+  function blip(freq, dur=0.06, vol=0.045){
+    if(!unlocked || !actx) return;
+    try{
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = 'square'; o.frequency.value = freq;
+      g.gain.setValueAtTime(vol, actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + dur);
+      o.connect(g).connect(actx.destination);
+      o.start(); o.stop(actx.currentTime + dur);
+    }catch(e){}
+  }
+  document.querySelectorAll('.join').forEach(b=>{
+    b.addEventListener('pointerenter', ()=> blip(1180, .035, .02));
+  });
+
+  /* ---- штамп допуска + переход ---- */
+  const stamp = document.getElementById('stamp'),
+        sMain = document.getElementById('stampMain'),
+        sRole = document.getElementById('stampRole'),
+        sCard = document.getElementById('stampCard'),
+        roles = {
+          1:{ main:'ИГРОК 1', role:'СТУДЕНТ · ПУЛЬТ ТЕСТА',      cls:'st-red',  href:'test.html' },
+          2:{ main:'ИГРОК 2', role:'МАНУАЛ · ПУЛЬТ ИНСТРУКЦИЙ',  cls:'st-cyan', href:'documentation.html' }
+        };
+  let going = false;
+  document.querySelectorAll('.join').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(going) return;
+      going = true;
+      const r = roles[btn.dataset.player];
+      sMain.textContent = r.main;
+      sRole.textContent = r.role;
+      sCard.classList.remove('st-red','st-cyan');
+      sCard.classList.add(r.cls);
+      stamp.classList.add('show');
+      document.body.classList.add('shake');
+      setTimeout(()=>document.body.classList.remove('shake'), 320);
+      blip(720,.07); setTimeout(()=>blip(1040,.09), 90);
+      setTimeout(()=>{ location.href = r.href; }, 1500);
+    });
+  });
+})();
+</script>
+</body>
+</html>
