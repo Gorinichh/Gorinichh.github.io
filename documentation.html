@@ -10,8 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#090d12; --panel:#0e141b; --ink:#dce4ec; --mut:#7d8894; --line:#233040;
-    --yellow:#ffc826; --red:#ff4438; --cyan:#54c8ff; --cyan-dim:rgba(84,200,255,.14);
+    --bg:#0c1219; --panel:#101820; --ink:#dce4ec; --mut:#8494a3; --line:#243446;
+    --yellow:#ffc826; --red:#ff4438; --cyan:#54c8ff; --cyan-dim:rgba(84,200,255,.12);
     --mono:'IBM Plex Mono',monospace; --disp:'Russo One',sans-serif;
   }
   *{margin:0;padding:0;box-sizing:border-box}
@@ -19,19 +19,18 @@
   body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;
     background-image:
       radial-gradient(80% 50% at 80% 0%, rgba(84,200,255,.07), transparent 60%),
-      linear-gradient(rgba(84,200,255,.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(84,200,255,.03) 1px, transparent 1px);
+      linear-gradient(rgba(84,200,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(84,200,255,.035) 1px, transparent 1px);
     background-size:auto, 42px 42px, 42px 42px}
-  .scanlines{position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.4;
-    background:repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px)}
+  .scanlines{position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.35;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,.13) 0 1px, transparent 1px 3px)}
   .watermark{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;z-index:0;overflow:hidden}
-  .watermark span{font-family:var(--disp);font-size:clamp(90px,17vw,230px);color:rgba(84,200,255,.04);
+  .watermark span{font-family:var(--disp);font-size:clamp(90px,17vw,230px);color:rgba(84,200,255,.045);
     transform:rotate(-24deg);letter-spacing:.1em;white-space:nowrap}
-
   .hazard{height:6px;background:repeating-linear-gradient(135deg,#0d0f12 0 12px,var(--cyan) 12px 24px)}
 
   header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
-    padding:16px 26px;border-bottom:1px solid var(--line);background:rgba(9,13,18,.92);position:sticky;top:0;z-index:40}
+    padding:16px 26px;border-bottom:1px solid var(--line);background:rgba(12,18,25,.94);position:sticky;top:0;z-index:40}
   .h-left{display:flex;align-items:center;gap:16px}
   .book{flex:none;width:44px;height:44px;color:var(--cyan)}
   .h-title{font-family:var(--disp);font-size:clamp(15px,2.2vw,21px);letter-spacing:.06em;color:var(--cyan);
@@ -53,32 +52,39 @@
     gap:30px;max-width:1180px;margin:0 auto;padding:34px 24px 80px}
   @media(max-width:900px){.doc{grid-template-columns:1fr}}
 
-  .toc{position:sticky;top:120px;align-self:start;border:1px solid var(--line);background:rgba(14,20,27,.85);padding:18px}
-  @media(max-width:900px){.toc{position:static;display:flex;flex-wrap:wrap;gap:8px;padding:12px}}
+  .toc{position:sticky;top:120px;align-self:start;border:1px solid var(--line);background:rgba(16,24,32,.9);padding:18px}
+  @media(max-width:900px){.toc{position:static;display:flex;flex-wrap:wrap;gap:6px;padding:12px}}
   .toc h2{font-size:10px;letter-spacing:.34em;color:var(--mut);margin-bottom:14px}
   @media(max-width:900px){.toc h2{width:100%;margin-bottom:4px}}
-  .toc a{display:block;color:#9fb2c2;text-decoration:none;font-size:11px;letter-spacing:.1em;
-    padding:8px 10px;border-left:2px solid transparent;transition:all .2s;margin-bottom:2px}
+  .toc a{display:block;color:#9fb2c2;text-decoration:none;font-size:11px;letter-spacing:.08em;
+    padding:7px 10px;border-left:2px solid transparent;transition:all .2s;margin-bottom:2px}
   .toc a:hover{color:var(--ink);background:var(--cyan-dim)}
   .toc a.active{color:var(--cyan);border-left-color:var(--cyan);background:var(--cyan-dim)}
   .toc a b{color:inherit;font-weight:700;margin-right:8px}
 
-  .sec{border:1px solid var(--line);background:rgba(14,20,27,.82);margin-bottom:26px;scroll-margin-top:130px;
+  .sec{border:1px solid var(--line);background:rgba(16,24,32,.85);margin-bottom:26px;scroll-margin-top:130px;
     transition:border-color .3s}
   .sec:hover{border-color:rgba(84,200,255,.4)}
-  .sec-head{display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px dashed var(--line)}
+  .sec-head{display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px dashed var(--line);flex-wrap:wrap}
   .sec-num{font-family:var(--disp);font-size:22px;color:var(--cyan);opacity:.9}
   .sec-head h2{font-family:var(--disp);font-size:clamp(15px,2vw,19px);letter-spacing:.06em}
   .sec-head .tag{margin-left:auto;font-size:9px;letter-spacing:.24em;color:var(--mut);border:1px solid var(--line);padding:4px 10px}
   .sec-body{padding:20px 22px 24px;font-size:13px;line-height:1.9;color:#b9c6d2}
   .sec-body b{color:var(--yellow)}
   .sec-body .imp{color:#ffb3ad}
-  .rule{border-left:3px solid var(--cyan);background:var(--cyan-dim);padding:10px 16px;margin:12px 0;font-size:12px}
-  .coupon{border:2px dashed rgba(255,200,38,.5);padding:14px 18px;margin:14px 0;font-size:13px;line-height:2.1}
-  .coupon .fx{font-size:9px;letter-spacing:.3em;color:var(--yellow);margin-bottom:6px}
+  .rule{border-left:3px solid var(--cyan);background:var(--cyan-dim);padding:10px 16px;margin:12px 0;font-size:12.5px}
+
+  .te{border:1px solid var(--line);margin:16px 0;background:rgba(10,16,22,.65)}
+  .te-head{display:flex;gap:12px;align-items:center;padding:10px 16px;border-bottom:1px dashed var(--line);
+    background:rgba(84,200,255,.06);flex-wrap:wrap}
+  .te-num{font-family:var(--disp);color:var(--cyan);font-size:15px}
+  .te-title{font-family:var(--disp);font-size:13px;letter-spacing:.06em}
+  .te-id{margin-left:auto;font-size:9px;letter-spacing:.2em;color:var(--mut)}
+  .te-body{padding:12px 16px 14px;font-size:12.5px;line-height:1.85}
+  .te-body .rec{color:var(--mut);font-size:11px;display:block;margin-bottom:8px}
 
   table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px}
-  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left}
+  th,td{border:1px solid var(--line);padding:8px 12px;text-align:left}
   th{font-size:9px;letter-spacing:.26em;color:var(--mut);font-weight:400}
   td b{color:var(--ink)}
   .dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin-right:8px}
@@ -87,10 +93,7 @@
   footer{position:relative;z-index:5;border-top:1px solid var(--line);padding:18px 26px;
     font-size:10px;letter-spacing:.22em;color:var(--mut);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 
-  @media (prefers-reduced-motion:reduce){
-    html{scroll-behavior:auto}
-    *,*::before,*::after{animation:none!important;transition:none!important}
-  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
@@ -110,7 +113,7 @@
       <line x1="72" y1="58" x2="94" y2="54" stroke="currentColor" stroke-width="4" opacity=".5"/>
     </svg>
     <div class="h-title">МАНУАЛ САПЁРА
-      <small>ИНСТРУКЦИЯ ПО РАЗМИНИРОВАНИЮ ТЕСТОВ · ФОРМА 45-Б · ИЗД. 2026</small>
+      <small>30 ЗАДАНИЙ · УСТРОЙСТВО МК-45-Б · ИЗД. 2026 · ФОРМА 45-Б</small>
     </div>
   </div>
   <div class="h-right">
@@ -126,12 +129,18 @@
   <nav class="toc">
     <h2>ОГЛАВЛЕНИЕ</h2>
     <a href="#s00"><b>00</b>Общий регламент</a>
-    <a href="#s01"><b>01</b>Выбор ответа</a>
-    <a href="#s02"><b>02</b>Электрическая цепь</a>
-    <a href="#s03"><b>03</b>Код доступа</a>
-    <a href="#s04"><b>04</b>Кнопка «Ответить»</a>
-    <a href="#s05"><b>05</b>Индикаторы</a>
-    <a href="#s06"><b>06</b>Если началась паника</a>
+    <a href="#s01"><b>01</b>Паспорт устройства</a>
+    <a href="#s02"><b>02</b>Поиск задания (5 из 30)</a>
+    <a href="#ch1"><b>I</b>Задания выбора (01–07)</a>
+    <a href="#ch2"><b>II</b>Провода (08–10)</a>
+    <a href="#ch3"><b>III</b>Коды (11–13)</a>
+    <a href="#ch4"><b>IV</b>Тумблеры (14–17)</a>
+    <a href="#ch5"><b>V</b>Кнопки (18–20)</a>
+    <a href="#ch6"><b>VI</b>Логика (21–30)</a>
+    <a href="#appA"><b>А</b>Цвета варианта</a>
+    <a href="#appB"><b>Б</b>Морзе</a>
+    <a href="#appC"><b>В</b>Символы</a>
+    <a href="#appD"><b>Г</b>Паника</a>
   </nav>
 
   <article>
@@ -139,117 +148,342 @@
     <section class="sec" id="s00">
       <div class="sec-head"><span class="sec-num">00</span><h2>ОБЩИЙ РЕГЛАМЕНТ</h2><span class="tag">ЧИТАТЬ ПЕРВЫМ</span></div>
       <div class="sec-body">
-        Вы видите <b>правила</b>, студент видит <b>тест</b>. Общаться — только голосом.
-        <div class="rule">Спросите у студента и запомните: <b>СЕРИЮ</b> теста (например, АВ-572-К),
-        <b>НОМЕР ВАРИАНТА</b> (1–4) и какие <b>ИНДИКАТОРЫ</b> горят в шапке листа.</div>
-        ▸ На тест отведено <b>10:00</b>. Таймер общий.<br>
-        ▸ Каждая ошибка студента — <b>штраф −1:00</b> и отметка.<br>
-        ▸ <span class="imp">Три ошибки или ноль на таймере = отчисление.</span><br>
-        ▸ Когда все 4 задания решены, студент нажимает <b>«СДАТЬ РАБОТУ»</b>.
-        <div class="rule">Серия устроена так: две буквы — три цифры — буква (АВ-572-К).
-        В правилах важны и буквы, и цифры. Гласные буквы: <b>А, Е, И, О, У, Ы</b>.</div>
+        Вы видите <b>правила</b>, студент видит <b>устройство</b>. Общаться — только голосом.
+        <div class="rule">На устройстве <b>12:00</b>. Каждая ошибка — <b>штраф −1:00</b> и отметка.
+        <span class="imp">Три ошибки или ноль на таймере = отчисление.</span>
+        Когда все 5 заданий решены, студент нажимает «СДАТЬ РАБОТУ» на грани 01.</div>
+        Порядок работы: 1) соберите паспорт (§01); 2) студент называет заголовки граней; 3) найдите каждое задание по номеру;
+        4) диктуйте по одному шагу и ждите подтверждения.
       </div>
     </section>
 
     <section class="sec" id="s01">
-      <div class="sec-head"><span class="sec-num">01</span><h2>ЗАДАНИЕ 1 · ВЫБОР ОТВЕТА</h2><span class="tag">РАЗДЕЛ 3.1</span></div>
+      <div class="sec-head"><span class="sec-num">01</span><h2>ПАСПОРТ УСТРОЙСТВА</h2><span class="tag">СПРОСИТЬ ДО ВСЕГО</span></div>
       <div class="sec-body">
-        На листе четыре ответа с числами. Попросите студента <b>прочитать все четыре</b>, затем:
-        <div class="coupon">
-          <div class="fx">ФОРМУЛА 3.1</div>
-          Посчитайте цифры в <b>серии</b> теста: чётные и нечётные.<br>
-          ▸ Чётных <b>больше</b> → обвести <b>наименьшее</b> число.<br>
-          ▸ Нечётных <b>больше</b> → обвести <b>наибольшее</b>.<br>
-          ▸ Поровну → обвести <b>второй ответ слева</b>.
+        Слева внизу у студента есть «Паспорт устройства». Спросите и запишите:
+        <div class="rule">
+        ▸ <b>СЕРИЯ</b> — две буквы, три цифры, буква (пример: КВ-417-Т). Гласные: <b>А, Е, И, О, У, Ы</b>.<br>
+        ▸ <b>ВАРИАНТ</b> — № 1–4.<br>
+        ▸ <b>БАТАРЕИ</b> — от 0 до 3 штук.<br>
+        ▸ <b>ИНДИКАТОРЫ</b> — какие из трёх горят: ЗВОНОК, РУЧКА, КОФЕ.
         </div>
-        Пример: серия КВ-417-Т. Цифры 4, 1, 7: чётная одна, нечётных две → студент обводит <b>самый большой</b> ответ.
+        Эти четыре значения используются почти во всех тридцати правилах. Держите их перед глазами.
       </div>
     </section>
 
     <section class="sec" id="s02">
-      <div class="sec-head"><span class="sec-num">02</span><h2>ЗАДАНИЕ 2 · ЭЛЕКТРИЧЕСКАЯ ЦЕПЬ</h2><span class="tag">РАЗДЕЛ 5.4</span></div>
+      <div class="sec-head"><span class="sec-num">02</span><h2>ПОИСК ЗАДАНИЯ</h2><span class="tag">5 ИЗ 30</span></div>
       <div class="sec-body">
-        Пять проводов:
+        На коробке всегда <b>5 заданий из 30 возможных</b>, в случайном наборе, на пяти гранях
+        (передняя, правая, задняя, левая и верхняя). Каждая грань подписана: номер задания и название.
+        Студент читает заголовок грани → вы находите в мануале задание с этим номером (01–30) →
+        применяете правило. Не угадывайте: номера не совпадают с номерами граней.
+      </div>
+    </section>
+
+    <!-- ================= ГЛАВА I ================= -->
+    <section class="sec" id="ch1">
+      <div class="sec-head"><span class="sec-num">I</span><h2>ЗАДАНИЯ ВЫБОРА (01–07)</h2><span class="tag">ГЛАВА</span></div>
+      <div class="sec-body">
+
+        <div class="te"><div class="te-head"><span class="te-num">01</span><span class="te-title">«ВЫБОР ОТВЕТА»</span><span class="te-id">4 ЧИСЛА · А/Б/В/Г</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: четыре ответа с числами, подписаны А–Г.</span>
+        Посчитайте цифры серии: чётные и нечётные.<br>
+        ▸ Чётных <b>больше</b> → обвести <b>наименьшее</b>.<br>
+        ▸ Нечётных <b>больше</b> → обвести <b>наибольшее</b>.<br>
+        ▸ Поровну → обвести <b>второй слева (Б)</b>.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">02</span><span class="te-title">«СУММЫ»</span><span class="te-id">4 ЧИСЛА</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: просто четыре числа без подписей.</span>
+        Для каждого числа сложите его цифры (пример: 47 → 4+7 = 11).<br>
+        ▸ Вариант <b>нечётный</b> (1 или 3) → число с <b>наибольшей</b> суммой цифр.<br>
+        ▸ Вариант <b>чётный</b> (2 или 4) → с <b>наименьшей</b>.<br>
+        При равенстве сумм — <b>левое</b> из них.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">03</span><span class="te-title">«ЦВЕТНОЙ РЯД»</span><span class="te-id">4 ЦВЕТНЫЕ КНОПКИ</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: кнопки «красный / жёлтый / зелёный / синий».</span>
+        Смотрите только на <b>число батарей</b>:<br>
+        0 батарей → <b>жёлтый</b> · 1 → <b>красный</b> · 2 → <b>зелёный</b> · 3 → <b>синий</b>.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">04</span><span class="te-title">«ЧЁТНЫЙ РЯД»</span><span class="te-id">6 ЧИСЕЛ + ПРОВЕРКА</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: шесть чисел и кнопка «ПРОВЕРИТЬ».</span>
+        Студент должен отметить <b>все</b> числа той же чётности, что <b>последняя цифра серии</b>
+        (последняя чётная → отметить все чётные; нечётная → все нечётные), и только их.
+        Пропуск или лишнее = ошибка. После ошибки отметить заново всё.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">05</span><span class="te-title">«БУКВЫ»</span><span class="te-id">4 БУКВЫ</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: четыре буквы.</span>
+        Посчитайте гласные буквы в серии.<br>
+        ▸ Гласных <b>0 или 1</b> → среди четырёх нажмите <b>гласную</b> (она там одна).<br>
+        ▸ Гласных <b>2 или 3</b> → нажмите <b>согласную</b> (она там одна).</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">06</span><span class="te-title">«ДРОБИ»</span><span class="te-id">4 ДРОБИ</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: четыре дроби вида 3/4.</span>
+        Два шага, строго по порядку:<br>
+        1) Если индикатор <b>КОФЕ горит</b> → рассматриваем только дроби <b>больше 1</b> (числитель больше знаменателя).
+        Если КОФЕ не горит → только <b>меньше 1</b>.<br>
+        2) Из оставшихся двух: вариант <b>чётный</b> → <b>меньшую</b> по значению; вариант <b>нечётный</b> → <b>большую</b>.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">07</span><span class="te-title">«РИМСКИЕ ЧИСЛА»</span><span class="te-id">4 РИМСКИХ ЧИСЛА</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: IV, XXIII, LXXVII и т.п.</span>
+        Переведите в обычные числа (I=1, V=5, X=10, L=50; IV=4, IX=9, XL=40).<br>
+        ▸ <b>Первая цифра</b> серии чётная → выбрать <b>наименьшее</b>.<br>
+        ▸ Нечётная → <b>наибольшее</b>.</div></div>
+
+      </div>
+    </section>
+
+    <!-- ================= ГЛАВА II ================= -->
+    <section class="sec" id="ch2">
+      <div class="sec-head"><span class="sec-num">II</span><h2>ПРОВОДА И ЦЕПИ (08–10)</h2><span class="tag">ГЛАВА</span></div>
+      <div class="sec-body">
+        Цвета проводов:
         <span class="sw" style="background:#d63c31"></span>красный,
         <span class="sw" style="background:#e8b522"></span>жёлтый,
         <span class="sw" style="background:#3a6fc4"></span>синий,
         <span class="sw" style="background:#3f9e5f"></span>зелёный,
-        <span class="sw" style="background:#e9e7de;border:1px solid #999"></span>белый.
-        <div class="coupon">
-          <div class="fx">ФОРМУЛА 5.4</div>
-          Посмотрите на <b>последнюю цифру</b> серии.<br>
-          ▸ Если она <b>чётная</b> (0, 2, 4, 6, 8) → зачеркнуть все <b>тёплые</b> провода:
-          <span class="sw" style="background:#d63c31"></span>красный и
-          <span class="sw" style="background:#e8b522"></span>жёлтый.<br>
-          ▸ Если <b>нечётная</b> (1, 3, 5, 7, 9) → все <b>холодные</b>:
-          <span class="sw" style="background:#3a6fc4"></span>синий и
-          <span class="sw" style="background:#3f9e5f"></span>зелёный.<br>
-          ▸ <span class="imp">Белый провод не трогать никогда.</span>
-        </div>
-        Порядок зачёркивания любой. Ошибочный крестик исчезает, но штраф остаётся — поэтому диктуйте по одному проводу.
-      </div>
-    </section>
+        <span class="sw" style="background:#e9e7de;border:1px solid #888"></span>белый.
+        Всегда диктуйте по одному проводу.
 
-    <section class="sec" id="s03">
-      <div class="sec-head"><span class="sec-num">03</span><h2>ЗАДАНИЕ 3 · КОД ДОСТУПА</h2><span class="tag">РАЗДЕЛ 7.2</span></div>
-      <div class="sec-body">
-        Студент вводит 4 цифры на клавиатуре. Код <b>вычисляется</b>, его нигде не написано:
-        <div class="coupon">
-          <div class="fx">ФОРМУЛА 7.2</div>
-          1-я цифра — сколько <b>гласных букв</b> в серии (А, Е, И, О, У, Ы).<br>
-          2-я цифра — <b>номер варианта × 2</b>; если вышло 10 или больше, взять последнюю цифру.<br>
-          3-я цифра — <b>последняя цифра</b> серии.<br>
-          4-я цифра — если индикатор <b>«КОФЕ»</b> горит: сложить 1-ю и 3-ю цифры и взять последнюю цифру суммы.
-          Если «КОФЕ» не горит — <b>7</b>.
-        </div>
-        Пример: серия МО-427-А, вариант 2, «КОФЕ» горит.<br>
-        Гласные: О, О, А → <b>3</b>. Вариант 2 × 2 → <b>4</b>. Последняя цифра серии → <b>7</b>.
-        3 + 7 = 10 → последняя цифра → <b>0</b>. Код: <b>3-4-7-0</b>.
-      </div>
-    </section>
+        <div class="te"><div class="te-head"><span class="te-num">08</span><span class="te-title">«ЭЛЕКТРИЧЕСКАЯ ЦЕПЬ»</span><span class="te-id">5 ПРОВОДОВ</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: надпись «ЗАЧЁРКИВАТЬ МАРКЕРОМ».</span>
+        Смотрите на <b>последнюю цифру</b> серии.<br>
+        ▸ Чётная → зачеркнуть <b>тёплые</b>: <span class="sw" style="background:#d63c31"></span>красный и
+        <span class="sw" style="background:#e8b522"></span>жёлтый.<br>
+        ▸ Нечётная → <b>холодные</b>: <span class="sw" style="background:#3a6fc4"></span>синий и
+        <span class="sw" style="background:#3f9e5f"></span>зелёный.<br>
+        <span class="imp">Белый не трогать никогда.</span> Порядок любой.</div></div>
 
-    <section class="sec" id="s04">
-      <div class="sec-head"><span class="sec-num">04</span><h2>ЗАДАНИЕ 4 · КНОПКА «ОТВЕТИТЬ»</h2><span class="tag">РАЗДЕЛ 9.9</span></div>
-      <div class="sec-body">
-        Студент нажимает большую кнопку и <b>держит</b>. Рядом загорается лампа и начинает переключать цвета.
-        <div class="coupon">
-          <div class="fx">ФОРМУЛА 9.9</div>
-          Команда «ОТПУСКАЙ» даётся, когда лампа горит цветом варианта:
-        </div>
+        <div class="te"><div class="te-head"><span class="te-num">09</span><span class="te-title">«ПОРЯДОК РЕЗКИ»</span><span class="te-id">5 ПРОВОДОВ · ПО ОЧЕРЕДИ</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: наклейка «ПОРЯДОК ЕСТЬ ДИСЦИПЛИНА».</span>
+        Здесь важен <b>порядок</b>. Найдите столбец варианта в таблице и диктуйте по одному:
         <table>
-          <tr><th>ВАРИАНТ</th><th>ЦВЕТ ЛАМПЫ ДЛЯ ОТПУСКАНИЯ</th></tr>
-          <tr><td><b>№ 1</b></td><td><span class="dot" style="background:#ffd23f"></span><b>ЖЁЛТЫЙ</b></td></tr>
-          <tr><td><b>№ 2</b></td><td><span class="dot" style="background:#ff4438"></span><b>КРАСНЫЙ</b></td></tr>
-          <tr><td><b>№ 3</b></td><td><span class="dot" style="background:#43c96e"></span><b>ЗЕЛЁНЫЙ</b></td></tr>
-          <tr><td><b>№ 4</b></td><td><span class="dot" style="background:#4a9dff"></span><b>СИНИЙ</b></td></tr>
+          <tr><th>ШАГ</th><th>ВАР. 1</th><th>ВАР. 2</th><th>ВАР. 3</th><th>ВАР. 4</th></tr>
+          <tr><td>1-й</td><td>белый</td><td>красный</td><td>зелёный</td><td>жёлтый</td></tr>
+          <tr><td>2-й</td><td>красный</td><td>жёлтый</td><td>синий</td><td>зелёный</td></tr>
+          <tr><td>3-й</td><td>синий</td><td>зелёный</td><td>белый</td><td>красный</td></tr>
+          <tr><td>4-й</td><td>жёлтый</td><td>синий</td><td>красный</td><td>белый</td></tr>
+          <tr><td>5-й</td><td>зелёный</td><td>белый</td><td>жёлтый</td><td>синий</td></tr>
         </table>
-        <span class="imp">Внимание:</span> кнопку нужно именно держать. Если студент отпустит её раньше,
-        чем через полсекунды, это считается ошибкой. Цвета переключаются примерно раз в полсекунды —
-        командуйте заранее: «держи… жди зелёный… ОТПУСКАЙ!»
+        Ошибка сбрасывает прогресс: начинать заново с 1-го шага.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">10</span><span class="te-title">«СИЛОВАЯ ЦЕПЬ»</span><span class="te-id">5 ПРОВОДОВ · ОДИН НЕ ТРОГАТЬ</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: упоминание «несущего провода».</span>
+        Несущий провод — провод <b>цвета вашего варианта</b> (см. Приложение А).
+        Его трогать <span class="imp">нельзя</span>. Зачеркните <b>все остальные четыре</b>, порядок любой.</div></div>
       </div>
     </section>
 
-    <section class="sec" id="s05">
-      <div class="sec-head"><span class="sec-num">05</span><h2>ИНДИКАТОРЫ</h2><span class="tag">ПРИЛОЖЕНИЕ Б</span></div>
+    <!-- ================= ГЛАВА III ================= -->
+    <section class="sec" id="ch3">
+      <div class="sec-head"><span class="sec-num">III</span><h2>КОДЫ И ШИФРЫ (11–13)</h2><span class="tag">ГЛАВА</span></div>
       <div class="sec-body">
-        В шапке теста написаны три индикатора; горят только некоторые. Спросите студента, какие горят.
-        <table>
-          <tr><th>ИНДИКАТОР</th><th>НАЗНАЧЕНИЕ</th></tr>
-          <tr><td><b>КОФЕ</b></td><td>Нужен для <b>формулы 7.2</b> (задание 3). Единственный «рабочий» индикатор.</td></tr>
-          <tr><td><b>ЗВОНОК</b></td><td>Не влияет ни на что. Держит в тонусе.</td></tr>
-          <tr><td><b>КРАСНАЯ РУЧКА</b></td><td>Не влияет ни на что. Держит в страхе.</td></tr>
-        </table>
-        Если студент спрашивает про индикатор, которого нет в таблице, — это ловушка кафедры. Скажите «см. пункт 3.2» и переходите к делу.
+
+        <div class="te"><div class="te-head"><span class="te-num">11</span><span class="te-title">«КОД ДОСТУПА»</span><span class="te-id">4 ЦИФРЫ · КЛАВИАТУРА</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: экран на 4 клетки и клавиатура.</span>
+        ФОРМУЛА 11 — четыре цифры:<br>
+        1-я — число <b>гласных букв</b> в серии;<br>
+        2-я — <b>вариант × 2</b> (если ≥ 10 — последняя цифра);<br>
+        3-я — <b>последняя цифра</b> серии;<br>
+        4-я — если <b>КОФЕ горит</b>: последняя цифра суммы (1-я + 3-я); иначе — <b>7</b>.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">12</span><span class="te-title">«КОРОТКИЙ КОД»</span><span class="te-id">3 ЦИФРЫ</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: экран на 3 клетки.</span>
+        ФОРМУЛА 12:<br>
+        1-я — (<b>батареи + гласные</b>), последняя цифра;<br>
+        2-я — <b>последняя цифра</b> серии;<br>
+        3-я — (<b>вариант × последняя цифра</b>), последняя цифра.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">13</span><span class="te-title">«ЗЕРКАЛЬНЫЙ КОД»</span><span class="te-id">ШИФРОГРАММА + КЛАВИАТУРА</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: на грани написаны 4 цифры-шифрограмма.</span>
+        Студент диктует шифрограмму. Дальше решает индикатор <b>РУЧКА</b>:<br>
+        ▸ РУЧКА <b>горит</b> → вводим цифры шифрограммы <b>в том же порядке, каждую +1</b> (9 превращается в 0).<br>
+        ▸ РУЧКА <b>не горит</b> → вводим шифрограмму <b>задом наперёд</b>.</div></div>
       </div>
     </section>
 
-    <section class="sec" id="s06">
-      <div class="sec-head"><span class="sec-num">06</span><h2>ЕСЛИ НАЧАЛАСЬ ПАНИКА</h2><span class="tag">ПАМЯТКА</span></div>
+    <!-- ================= ГЛАВА IV ================= -->
+    <section class="sec" id="ch4">
+      <div class="sec-head"><span class="sec-num">IV</span><h2>ТУМБЛЕРЫ И РЕГУЛЯТОРЫ (14–17)</h2><span class="tag">ГЛАВА</span></div>
+      <div class="sec-body">
+
+        <div class="te"><div class="te-head"><span class="te-num">14</span><span class="te-title">«ПЯТЬ ТУМБЛЕРОВ»</span><span class="te-id">5 ТУМБЛЕРОВ + ПРОВЕРКА</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: ряд из пяти тумблеров, считая слева — биты 1–5.</span>
+        ФОРМУЛА 14: N = (<b>сумма цифр серии × вариант</b>), последние 5 бит (N по модулю 32).
+        Переведите N в двоичный код из 5 бит: <b>1-й тумблер — старший бит</b>, вверх = 1, вниз = 0.
+        Пример: сумма 12, вариант 3 → 36 → по модулю 32 = 4 → 00100 → вверх только 3-й тумблер.
+        Затем «ПРОВЕРИТЬ».</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">15</span><span class="te-title">«ТРИ ТУМБЛЕРА»</span><span class="te-id">3 ТУМБЛЕРА + ПРОВЕРКА</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: три тумблера.</span>
+        Тумблер №i — <b>вверх, если i-я цифра серии нечётная</b>, и вниз, если чётная.
+        Затем «ПРОВЕРИТЬ».</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">16</span><span class="te-title">«КРУТИЛКА»</span><span class="te-id">ЦИФЕРБЛАТ 0–7 + ⟲ ⟳ + ГОТОВО</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: круглая ручка с цифрами 0–7.</span>
+        Целевая цифра = (<b>сумма цифр серии + батареи</b>), последняя цифра результата… и ещё раз:
+        если вышло больше 7 — вычесть 8. Студент крутит кнопками ⟲/⟳ до этой цифры и жмёт «ГОТОВО».</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">17</span><span class="te-title">«РЫЧАГ»</span><span class="te-id">4 ПОЗИЦИИ</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: рычаг с гнёздами 1–4.</span>
+        Цепочка: возьмите <b>номер варианта</b>. Если <b>ЗВОНОК горит</b> — прибавьте 1.
+        Если <b>КОФЕ горит</b> — прибавьте ещё 1. Если вышло больше 4 — вычитайте 4.
+        Перевести рычаг в полученную позицию.</div></div>
+      </div>
+    </section>
+
+    <!-- ================= ГЛАВА V ================= -->
+    <section class="sec" id="ch5">
+      <div class="sec-head"><span class="sec-num">V</span><h2>КНОПКИ И УДЕРЖАНИЕ (18–20)</h2><span class="tag">ГЛАВА</span></div>
+      <div class="sec-body">
+
+        <div class="te"><div class="te-head"><span class="te-num">18</span><span class="te-title">«КНОПКА С ЛАМПОЙ»</span><span class="te-id">КРАСНАЯ КНОПКА + ЛАМПА</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: наклейка «РАНЬШЕ ВРЕМЕНИ НЕ ОТПУСКАТЬ».</span>
+        Студент нажимает и <b>держит</b> кнопку — лампа начнёт переключать цвета.
+        Командуйте «ОТПУСКАЙ», когда лампа горит цветом варианта (Приложение А).
+        Держать меньше полусекунды — ошибка.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">19</span><span class="te-title">«СЧЁТ ВСПЫШЕК»</span><span class="te-id">СИНЯЯ КНОПКА + ЛАМПА</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: синяя кнопка «ДЕРЖАТЬ».</span>
+        ФОРМУЛА 19: N = <b>вариант</b> + (КОФЕ горит ? <b>+2</b> : 0) + (ЗВОНОК горит ? <b>+1</b> : 0).
+        Студент держит кнопку, лампа мигает, вы оба считаете вспышки ВСЛУХ.
+        Командуйте «ОТПУСКАЙ» сразу после N-й вспышки.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">20</span><span class="te-title">«ДВЕ КНОПКИ»</span><span class="te-id">ЛЕВАЯ / ПРАВАЯ</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: всего две кнопки.</span>
+        ▸ Гласных букв в серии <b>чётное число</b> (0 или 2) → <b>левая</b>; нечётное → <b>правая</b>.<br>
+        ▸ <span class="imp">Подвох:</span> если <b>ЗВОНОК горит</b> — ответ меняется на противоположный.</div></div>
+      </div>
+    </section>
+
+    <!-- ================= ГЛАВА VI ================= -->
+    <section class="sec" id="ch6">
+      <div class="sec-head"><span class="sec-num">VI</span><h2>ЛОГИКА И НАБЛЮДЕНИЕ (21–30)</h2><span class="tag">ГЛАВА</span></div>
+      <div class="sec-body">
+
+        <div class="te"><div class="te-head"><span class="te-num">21</span><span class="te-title">«СРАВНЕНИЕ»</span><span class="te-id">X, Y И ЗНАКИ &gt; &lt; =</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: два числа на грани.</span>
+        Определите настоящее соотношение X и Y. Затем: если индикатор <b>РУЧКА горит</b>,
+        знаки <b>&gt; и &lt; меняются местами</b> (= не меняется). Нажмите итоговый знак.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">22</span><span class="te-title">«АЗБУКА МОРЗЕ»</span><span class="te-id">ЛАМПА ВЫСТУКИВАЕТ БУКВУ</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: подпись «ПЕРЕДАЧА», четыре варианта букв.</span>
+        Лампа по кругу выстукивает одну букву: точка — короткая вспышка, тире — длинная.
+        Расшифруйте по Приложению Б и нажмите эту букву.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">23</span><span class="te-title">«ПОВТОРИ ВСПЫШКИ»</span><span class="te-id">ПЛАШКА + 4 ЦВЕТНЫЕ КНОПКИ</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: плашка-экран и кнопки КРАСНЫЙ/ЖЁЛТЫЙ/ЗЕЛЁНЫЙ/СИНИЙ.</span>
+        Устройство покажет 4 вспышки подряд. Запомните их. Нажимать нужно <b>не то, что показано</b>:
+        <table>
+          <tr><th>СКОЛЬКО ОШИБОК УЖЕ ЕСТЬ</th><th>СДВИГ</th></tr>
+          <tr><td>0</td><td>нажимайте <b>показанный</b> цвет</td></tr>
+          <tr><td>1</td><td>цвет <b>+1 шаг</b> вперёд по кругу</td></tr>
+          <tr><td>2</td><td>цвет <b>+2 шага</b> вперёд по кругу</td></tr>
+        </table>
+        Круг цветов: красный → жёлтый → зелёный → синий → снова красный.
+        Пример: показан жёлтый, ошибок уже 1 → нажимать зелёный.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">24</span><span class="te-title">«СИМВОЛЫ»</span><span class="te-id">4 СИМВОЛА</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: странные значки (Ω, Ψ, ∆, λ, Σ, §, Ж, Ф).</span>
+        Порядок нажатия задаёт строка из Приложения В. Строку выбирайте по числу гласных в серии:
+        0–1 → строка I; 2 → строка II; 3 → строка III. Нажимайте показанные символы в порядке их появления в строке.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">25</span><span class="te-title">«КОСТИ»</span><span class="te-id">ДВА КУБИКА + 4 ЧИСЛА</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: пиктограммы кубиков.</span>
+        Правила проверяются <b>строго по порядку</b>, первое подошедшее побеждает:<br>
+        1) Если на кубиках <b>одинаковые</b> числа → ответ = их <b>произведение</b>.<br>
+        2) Иначе, если <b>вариант чётный</b> → ответ = <b>сумма</b>.<br>
+        3) Иначе → ответ = <b>разность</b> (из большего вычесть меньшее).</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">26</span><span class="te-title">«КАМЕНЬ–НОЖНИЦЫ–БУМАГА»</span><span class="te-id">3 КНОПКИ</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: кнопки КАМЕНЬ/НОЖНИЦЫ/БУМАГА.</span>
+        Устройство отвечает случайно после вашего хода.<br>
+        ▸ Вариант <b>нечётный</b> → студент обязан <b>ВЫИГРАТЬ</b> раунд.<br>
+        ▸ Вариант <b>чётный</b> → обязан <b>ПРОИГРАТЬ</b>.<br>
+        Ничья всегда ошибка. Камень бьёт ножницы, ножницы — бумагу, бумага — камень.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">27</span><span class="te-title">«ЛАМПЫ ДА/НЕТ»</span><span class="te-id">2 ЛАМПЫ + ДА/НЕТ</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: вопрос про чётность варианта.</span>
+        Вопрос всегда один: «Номер варианта — чётное число?» Сначала смотрите на лампы:<br>
+        ▸ Горят <b>обе</b> лампы → отвечайте <b>наоборот</b>.<br>
+        ▸ Во всех остальных случаях → отвечайте <b>правду</b>.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">28</span><span class="te-title">«ЦИФРЫ ПО ПОРЯДКУ»</span><span class="te-id">КНОПКИ С ЦИФРАМИ СЕРИИ</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: кнопки с цифрами из серии.</span>
+        Направление зависит от <b>последней буквы</b> серии:<br>
+        ▸ Последняя буква <b>гласная</b> → нажимать цифры <b>по убыванию</b>.<br>
+        ▸ Согласная → <b>по возрастанию</b>.<br>
+        Повторяющиеся цифры считаются один раз.</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">29</span><span class="te-title">«ГИРЛЯНДА»</span><span class="te-id">5 ЛАМП + ПРОВЕРКА</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: пять переключаемых ламп.</span>
+        Правило для каждой лампы, слева направо:<br>
+        1-я — горит, если <b>1-я цифра серии чётная</b>.<br>
+        2-я — горит, если <b>2-я цифра чётная</b>.<br>
+        3-я — горит, если <b>3-я цифра чётная</b>.<br>
+        4-я — горит, если <b>КОФЕ горит</b>.<br>
+        5-я — горит, если <b>вариант чётный</b>.<br>
+        Затем «ПРОВЕРИТЬ».</div></div>
+
+        <div class="te"><div class="te-head"><span class="te-num">30</span><span class="te-title">«АРИФМЕТИКА»</span><span class="te-id">ПРИМЕР СО ЗНАКОМ + КЛАВИАТУРА</span></div>
+        <div class="te-body"><span class="rec">ОПОЗНАНИЕ: пример вида A ▲ B, A ■ B или A ● B.</span>
+        Значки операций: <b>▲ = сложение, ■ = вычитание, ● = умножение</b>.
+        Посчитайте результат и продиктуйте; отрицательных результатов не бывает.
+        Подтверждение — кнопка «ОК».</div></div>
+      </div>
+    </section>
+
+    <!-- ================= ПРИЛОЖЕНИЯ ================= -->
+    <section class="sec" id="appA">
+      <div class="sec-head"><span class="sec-num">А</span><h2>ПРИЛОЖЕНИЕ А · ЦВЕТА ВАРИАНТА</h2><span class="tag">ДЛЯ 10, 18</span></div>
+      <div class="sec-body">
+        <table>
+          <tr><th>ВАРИАНТ</th><th>ЦВЕТ</th><th>ПРОВОД / ЛАМПА</th></tr>
+          <tr><td><b>№ 1</b></td><td><span class="dot" style="background:#ffd23f"></span><b>ЖЁЛТЫЙ</b></td><td>жёлтый провод</td></tr>
+          <tr><td><b>№ 2</b></td><td><span class="dot" style="background:#ff4438"></span><b>КРАСНЫЙ</b></td><td>красный провод</td></tr>
+          <tr><td><b>№ 3</b></td><td><span class="dot" style="background:#43c96e"></span><b>ЗЕЛЁНЫЙ</b></td><td>зелёный провод</td></tr>
+          <tr><td><b>№ 4</b></td><td><span class="dot" style="background:#4a9dff"></span><b>СИНИЙ</b></td><td>синий провод</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section class="sec" id="appB">
+      <div class="sec-head"><span class="sec-num">Б</span><h2>ПРИЛОЖЕНИЕ Б · АЗБУКА МОРЗЕ</h2><span class="tag">ДЛЯ 22</span></div>
+      <div class="sec-body">
+        Короткая вспышка = точка, длинная = тире.
+        <table>
+          <tr><th>БУКВА</th><th>КОД</th><th>БУКВА</th><th>КОД</th><th>БУКВА</th><th>КОД</th></tr>
+          <tr><td>А</td><td>· −</td><td>Ж</td><td>· · · −</td><td>О</td><td>− − −</td></tr>
+          <tr><td>Б</td><td>− · · ·</td><td>З</td><td>− − · ·</td><td>П</td><td>· − − ·</td></tr>
+          <tr><td>В</td><td>· − −</td><td>И</td><td>· ·</td><td>Р</td><td>· − ·</td></tr>
+          <tr><td>Г</td><td>− − ·</td><td>К</td><td>− · −</td><td>С</td><td>· · ·</td></tr>
+          <tr><td>Д</td><td>− · ·</td><td>Л</td><td>· − · ·</td><td>Т</td><td>−</td></tr>
+          <tr><td></td><td></td><td>М</td><td>− −</td><td>У</td><td>· · −</td></tr>
+          <tr><td></td><td></td><td>Н</td><td>− ·</td><td></td><td></td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section class="sec" id="appC">
+      <div class="sec-head"><span class="sec-num">В</span><h2>ПРИЛОЖЕНИЕ В · ПОРЯДОК СИМВОЛОВ</h2><span class="tag">ДЛЯ 24</span></div>
+      <div class="sec-body">
+        Строка выбирается по числу <b>гласных в серии</b>. Нажимать символы в порядке слева направо.
+        <table>
+          <tr><th>ГЛАСНЫХ</th><th>СТРОКА ПОРЯДКА</th></tr>
+          <tr><td>0–1</td><td><b>Ω → Ψ → ∆ → λ → Σ → § → Ж → Ф</b></td></tr>
+          <tr><td>2</td><td><b>Ψ → Σ → Ж → Ω → Ф → λ → ∆ → §</b></td></tr>
+          <tr><td>3</td><td><b>∆ → λ → Ω → § → Ж → Ψ → Ф → Σ</b></td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section class="sec" id="appD">
+      <div class="sec-head"><span class="sec-num">Г</span><h2>ПРИЛОЖЕНИЕ Г · ЕСЛИ НАЧАЛАСЬ ПАНИКА</h2><span class="tag">ПАМЯТКА</span></div>
       <div class="sec-body">
         ▸ Паника не является аргументом, но является состоянием. Говорите <b>медленнее</b>, а не быстрее.<br>
-        ▸ Не поняли задание — вернитесь к разделу <b>00</b> и переспросите серию и вариант.<br>
+        ▸ Не узнаёте задание — попросите студента прочитать заголовок грани ещё раз, номер есть в оглавлении.<br>
         ▸ Ошибка уже случилась — штраф снять нельзя, можно решить оставшееся.<br>
-        ▸ Осталась минута: бросьте текущее задание и решайте самое простое на слух.<br>
+        ▸ Запомните: задания 09, 13, 23 и 26 чаще всего путают даже отличников. Перечитайте их дважды.<br>
         ▸ Студент молчит дольше 5 секунд — напомните: молчание на экзамене запрещено.
       </div>
     </section>
@@ -258,27 +492,23 @@
 </main>
 
 <footer>
-  <span>ФОРМА 45-Б · ОТПЕЧАТАНО В ДЕКАНАТЕ</span>
+  <span>ФОРМА 45-Б · ОТПЕЧАТАНО В ДЕКАНАТЕ · 30 ЗАДАНИЙ</span>
   <span>КОПИРОВАНИЕ ЗАПРЕЩЕНО · ПАНИКА ЗАПРЕЩЕНА</span>
 </footer>
 
 <script>
 (function(){
-  /* часы */
   const clock=document.getElementById('clock');
-  function tick(){ clock.textContent=new Date().toLocaleTimeString('ru-RU'); }
-  tick(); setInterval(tick,1000);
-
-  /* подсветка активного раздела в оглавлении */
+  function tick(){clock.textContent=new Date().toLocaleTimeString('ru-RU');}
+  tick();setInterval(tick,1000);
   const secs=[...document.querySelectorAll('.sec')];
   const links=[...document.querySelectorAll('.toc a')];
   function spy(){
     let cur=secs[0].id;
-    secs.forEach(s=>{ if(s.getBoundingClientRect().top<150) cur=s.id; });
+    secs.forEach(s=>{if(s.getBoundingClientRect().top<160)cur=s.id;});
     links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));
   }
-  addEventListener('scroll',spy,{passive:true});
-  spy();
+  addEventListener('scroll',spy,{passive:true});spy();
 })();
 </script>
 </body>
