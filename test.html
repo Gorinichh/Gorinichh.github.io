@@ -3,529 +3,1135 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>МАНУАЛ САПЁРА · Пульт Игрока 2</title>
-<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📘</text></svg>'>
+<title>РЕШАЙ — И НИКТО НЕ ВЫЛЕТИТ · Пульт Игрока 1</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⏱️</text></svg>'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0c1219; --ink:#dce4ec; --mut:#8494a3; --line:#243446;
-    --yellow:#ffc826; --red:#ff4438; --cyan:#54c8ff; --cyan-dim:rgba(84,200,255,.12);
+    --bg:#161d26; --ink:#e8eef4; --mut:#8b98a5; --line:#3d4a5a;
+    --yellow:#ffc826; --red:#ff4438; --cyan:#54c8ff; --green:#43e97b;
     --mono:'IBM Plex Mono',monospace; --disp:'Russo One',sans-serif;
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
   body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;
     background-image:
-      radial-gradient(80% 50% at 80% 0%, rgba(84,200,255,.07), transparent 60%),
-      linear-gradient(rgba(84,200,255,.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(84,200,255,.035) 1px, transparent 1px);
-    background-size:auto, 42px 42px, 42px 42px}
-  .scanlines{position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.35;
+      radial-gradient(60% 40% at 50% 0%, rgba(255,214,140,.10), transparent 65%),
+      radial-gradient(80% 60% at 50% 110%, rgba(120,150,190,.14), transparent 60%),
+      linear-gradient(rgba(140,165,195,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(140,165,195,.05) 1px, transparent 1px);
+    background-size:auto,auto,46px 46px,46px 46px}
+  .scanlines{position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.22;
     background:repeating-linear-gradient(0deg, rgba(0,0,0,.13) 0 1px, transparent 1px 3px)}
-  .watermark{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;z-index:0;overflow:hidden}
-  .watermark span{font-family:var(--disp);font-size:clamp(90px,17vw,230px);color:rgba(84,200,255,.045);
-    transform:rotate(-24deg);letter-spacing:.1em;white-space:nowrap}
-  .hazard{height:6px;background:repeating-linear-gradient(135deg,#0d0f12 0 12px,var(--cyan) 12px 24px)}
-  header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
-    padding:16px 26px;border-bottom:1px solid var(--line);background:rgba(12,18,25,.94);position:sticky;top:0;z-index:40}
-  .h-left{display:flex;align-items:center;gap:16px}
-  .book{flex:none;width:44px;height:44px;color:var(--cyan)}
-  .h-title{font-family:var(--disp);font-size:clamp(15px,2.2vw,21px);letter-spacing:.06em;color:var(--cyan);text-shadow:0 0 22px rgba(84,200,255,.3)}
-  .h-title small{display:block;font-family:var(--mono);font-weight:400;font-size:9px;letter-spacing:.3em;color:var(--mut);margin-top:5px}
-  .h-right{display:flex;align-items:center;gap:10px;font-size:11px;flex-wrap:wrap}
-  .chip{border:1px solid var(--line);padding:6px 12px;letter-spacing:.16em;color:var(--mut);white-space:nowrap}
-  .chip.p2{color:var(--cyan);border-color:rgba(84,200,255,.45)}
-  .chip.clock{color:var(--yellow);font-weight:700}
-  .home{border:1px solid var(--line);color:var(--ink);text-decoration:none;padding:7px 14px;font-size:11px;letter-spacing:.16em}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    padding:10px 20px;border-bottom:1px solid var(--line);background:rgba(16,22,29,.94);position:relative;z-index:20}
+  .topbar::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:6px;
+    background:repeating-linear-gradient(135deg,#12161b 0 10px,var(--yellow) 10px 20px);opacity:.9}
+  .tb-title{font-family:var(--disp);font-size:13px;letter-spacing:.08em;color:var(--yellow)}
+  .tb-title small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.28em;color:var(--mut);margin-top:3px}
+  .tb-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .chip{border:1px solid var(--line);padding:6px 12px;font-size:10px;letter-spacing:.16em;color:var(--mut)}
+  .chip b{color:var(--yellow)}
+  .home{border:1px solid var(--line);color:var(--ink);text-decoration:none;padding:7px 14px;font-size:10px;letter-spacing:.16em}
   .home:hover{border-color:var(--yellow);color:var(--yellow)}
-  .warnbar{background:var(--red);color:#fff;text-align:center;font-family:var(--disp);font-size:12px;letter-spacing:.14em;padding:9px 16px}
-  .warnbar::before{content:"⚠ ";}.warnbar::after{content:" ⚠"}
-  .doc{position:relative;z-index:5;display:grid;grid-template-columns:250px minmax(0,1fr);gap:30px;max-width:1180px;margin:0 auto;padding:34px 24px 80px}
-  @media(max-width:900px){.doc{grid-template-columns:1fr}}
-  .toc{position:sticky;top:120px;align-self:start;border:1px solid var(--line);background:rgba(16,24,32,.9);padding:18px}
-  @media(max-width:900px){.toc{position:static;display:flex;flex-wrap:wrap;gap:6px;padding:12px}}
-  .toc h2{font-size:10px;letter-spacing:.34em;color:var(--mut);margin-bottom:14px}
-  .toc a{display:block;color:#9fb2c2;text-decoration:none;font-size:11px;letter-spacing:.08em;padding:7px 10px;border-left:2px solid transparent;margin-bottom:2px}
-  .toc a:hover{color:var(--ink);background:var(--cyan-dim)}
-  .toc a.active{color:var(--cyan);border-left-color:var(--cyan);background:var(--cyan-dim)}
-  .toc a b{color:inherit;font-weight:700;margin-right:8px}
-  .sec{border:1px solid var(--line);background:rgba(16,24,32,.85);margin-bottom:26px;scroll-margin-top:130px}
-  .sec-head{display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px dashed var(--line);flex-wrap:wrap}
-  .sec-num{font-family:var(--disp);font-size:22px;color:var(--cyan);opacity:.9}
-  .sec-head h2{font-family:var(--disp);font-size:clamp(15px,2vw,19px);letter-spacing:.06em}
-  .sec-head .tag{margin-left:auto;font-size:9px;letter-spacing:.24em;color:var(--mut);border:1px solid var(--line);padding:4px 10px}
-  .sec-body{padding:20px 22px 24px;font-size:13px;line-height:1.9;color:#b9c6d2}
-  .sec-body b{color:var(--yellow)}
-  .sec-body .imp{color:#ffb3ad}
-  .rule{border-left:3px solid var(--cyan);background:var(--cyan-dim);padding:10px 16px;margin:12px 0;font-size:12.5px}
-  .te{border:1px solid var(--line);margin:16px 0;background:rgba(10,16,22,.65)}
-  .te-head{display:flex;gap:12px;align-items:center;padding:10px 16px;border-bottom:1px dashed var(--line);background:rgba(84,200,255,.06);flex-wrap:wrap}
-  .te-glyph{font-family:var(--mono);font-size:20px;color:var(--cyan)}
-  .te-title{font-family:var(--disp);font-size:13px;letter-spacing:.06em}
-  .te-id{margin-left:auto;font-size:9px;letter-spacing:.2em;color:var(--mut)}
-  .te-body{padding:12px 16px 14px;font-size:12.5px;line-height:1.85}
-  .te-body .rec{color:var(--mut);font-size:11px;display:block;margin-bottom:8px}
-  .te-body .step{display:block;margin:6px 0;padding-left:14px;border-left:2px solid rgba(84,200,255,.3)}
-  .te-body .step b{color:var(--cyan)}
-  .te-body .var{display:block;margin-top:8px;padding:6px 10px;border:1px dashed rgba(255,200,38,.35);color:#e8d59a;font-size:11px}
-  .formula{font-family:var(--mono);background:rgba(84,200,255,.08);padding:2px 8px;border-radius:3px;color:#b8e6ff}
-  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px}
-  th,td{border:1px solid var(--line);padding:8px 12px;text-align:left}
-  th{font-size:9px;letter-spacing:.26em;color:var(--mut);font-weight:400}
-  td b{color:var(--ink)}
-  .dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin-right:8px}
-  .sw{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-1px;margin:0 3px}
-  footer{position:relative;z-index:5;border-top:1px solid var(--line);padding:18px 26px;font-size:10px;letter-spacing:.22em;color:var(--mut);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+  .stage{display:flex;justify-content:center;padding:34px 14px 70px;position:relative;z-index:5}
+  .stage.boom{animation:boom .35s linear}
+  @keyframes boom{20%{transform:translate(6px,-4px)}40%{transform:translate(-6px,4px)}
+    60%{transform:translate(4px,3px)}80%{transform:translate(-4px,-3px)}}
+
+  .board{width:min(1100px,97vw);position:relative;
+    background:linear-gradient(180deg,#e8ecf0 0%,#c9ced5 45%,#b0b6be 85%,#8f959d 100%);
+    border-radius:18px;padding:14px 16px 22px;
+    box-shadow:0 40px 80px rgba(0,0,0,.6),0 8px 20px rgba(0,0,0,.45),
+      inset 0 2px 0 #fff, inset 0 -10px 22px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.12);
+    transform:perspective(1600px) rotateX(2deg)}
+  .board::before,.board::after{content:"";position:absolute;top:22%;bottom:22%;width:18px;
+    background:linear-gradient(90deg,#6b727a,#8b929a 45%,#a4aab2 55%,#7d838b);
+    border-radius:4px;box-shadow:inset 0 0 6px rgba(0,0,0,.4),0 3px 8px rgba(0,0,0,.4);z-index:-1}
+  .board::before{left:-14px}.board::after{right:-14px}
+  .board-stand{position:absolute;left:2%;right:2%;bottom:-14px;height:16px;z-index:-1;
+    background:linear-gradient(#8d939a,#5f656c);border-radius:0 0 16px 16px;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+  .hazard-tape{height:8px;border-radius:18px 18px 0 0;
+    background:repeating-linear-gradient(135deg,#12161b 0 10px,var(--yellow) 10px 20px)}
+  .screws{position:absolute;inset:7px;pointer-events:none;background:
+    radial-gradient(circle 5px at 10px 10px,#f2f4f6 0 20%,#878d94 24% 55%,#4c5259 58% 100%),
+    radial-gradient(circle 5px at calc(100% - 10px) 10px,#f2f4f6 0 20%,#878d94 24% 55%,#4c5259 58% 100%),
+    radial-gradient(circle 5px at 10px calc(100% - 10px),#f2f4f6 0 20%,#878d94 24% 55%,#4c5259 58% 100%),
+    radial-gradient(circle 5px at calc(100% - 10px) calc(100% - 10px),#f2f4f6 0 20%,#878d94 24% 55%,#4c5259 58% 100%)}
+  .board-engrave{position:absolute;top:14px;left:50%;transform:translateX(-50%);
+    font-family:var(--disp);font-size:10px;letter-spacing:.4em;color:rgba(86,92,100,.55);
+    text-shadow:0 1px 0 rgba(255,255,255,.6);pointer-events:none;white-space:nowrap}
+  .board-serial{position:absolute;top:36px;left:50%;transform:translateX(-50%);
+    font-family:var(--disp);font-size:14px;letter-spacing:.3em;color:#3a4047;
+    text-shadow:0 1px 0 rgba(255,255,255,.5);pointer-events:none;white-space:nowrap;
+    border-bottom:2px solid #3a4047;padding-bottom:3px}
+  .board-tag{font-family:var(--disp);font-size:9px;letter-spacing:.3em;color:#565c64;text-align:center;
+    margin:52px 0 14px;text-shadow:0 1px 0 #fff;position:relative;z-index:1}
+
+  .bays{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:980px){.bays{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:620px){.bays{grid-template-columns:1fr}}
+
+  .bay{background:#20262d;border-radius:10px;border:2px solid #7d848c;border-top:5px solid var(--sk,#7d848c);
+    overflow:hidden;display:flex;flex-direction:column;position:relative;
+    box-shadow:inset 0 0 0 3px #171c22,0 4px 12px rgba(0,0,0,.4),0 1px 0 rgba(255,255,255,.25)}
+  .bay .wm{position:absolute;right:4px;bottom:-14px;font-family:var(--mono);font-size:74px;line-height:1;
+    color:var(--sk,#8b98a5);opacity:.20;pointer-events:none;z-index:1;text-shadow:0 0 18px currentColor}
+  .bay-label{display:flex;gap:8px;align-items:center;padding:7px 12px;
+    background:linear-gradient(180deg,#f0f3f6 0%,#d4d9de 45%,#b9bfc5 100%);color:#1c2126;
+    font-family:var(--disp);font-size:9px;letter-spacing:.12em;
+    border-bottom:2px solid #5d646b;position:relative;z-index:2;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,0,0,.15)}
+  .bay-label .glyph{font-family:var(--mono);font-size:15px;color:var(--sk,#333);margin-left:2px}
+  .bay-label .tpl{margin-left:6px;background:linear-gradient(180deg,#d3d8dd,#aab0b7);color:#1c2126;
+    border:1px solid #878d94;border-radius:3px;padding:2px 7px;font-family:var(--mono);font-size:9px;letter-spacing:.14em}
+  .bay-label .led{margin-left:auto;flex:none;width:9px;height:9px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#ff6a5e,#8c2f27);box-shadow:0 0 8px rgba(255,60,40,.7);
+    animation:blink 1.4s steps(1) infinite}
+  .bay.done .bay-label .led{background:radial-gradient(circle at 35% 30%,#7cf5a0,#1d7a3e);box-shadow:0 0 10px #2ecc71;animation:none}
+  .bay.done .bay-label{background:linear-gradient(180deg,#e2f5e8 0%,#b9dcc6 50%,#8fbc9c 100%)}
+  @keyframes blink{50%{opacity:.25}}
+  .bay-body{height:252px;display:flex;flex-direction:column;gap:9px;padding:13px 14px;
+    background-color:#12161c;background-image:var(--skp,none);background-size:var(--sks,auto);
+    color:#e6ecf2;overflow-y:auto;overflow-x:hidden;position:relative;z-index:2;
+    scrollbar-width:thin;scrollbar-color:#3d4a5a transparent;box-shadow:inset 0 4px 12px rgba(0,0,0,.5)}
+  .bay-body::-webkit-scrollbar{width:5px}
+  .bay-body::-webkit-scrollbar-thumb{background:#3d4a5a;border-radius:3px}
+
+  /* ===== 30 ВЫРАЗИТЕЛЬНЫХ ФАКТУР ===== */
+  .sk01{--sk:#ffb347;--skp:repeating-linear-gradient(45deg,rgba(255,179,71,.30) 0 14px,transparent 14px 30px);--skc:#3a2a10}
+  .sk02{--sk:#43e97b;--skp:radial-gradient(rgba(67,233,123,.35) 1.5px,transparent 2.2px),linear-gradient(90deg,transparent 0 46%,rgba(67,233,123,.25) 46% 54%,transparent 54%);--sks:12px 12px,100% 26px;--skc:#0d2416}
+  .sk03{--sk:#ff6a5e;--skp:linear-gradient(90deg,rgba(214,60,49,.35) 0 25%,rgba(232,181,34,.35) 25% 50%,rgba(63,158,95,.35) 50% 75%,rgba(58,111,196,.35) 75% 100%);--sks:56px 100%;--skc:#20242c}
+  .sk04{--sk:#e9e7de;--skp:radial-gradient(circle 3px at 5px 8px,rgba(233,231,222,.5) 98%,transparent),repeating-linear-gradient(0deg,rgba(233,231,222,.16) 0 2px,transparent 2px 16px);--sks:100% 16px,auto;--skc:#2b2620}
+  .sk05{--sk:#c9c6ba;--skp:repeating-radial-gradient(circle at 50% 50%,rgba(255,255,255,.07) 0 8px,transparent 8px 20px);--skc:#26221c}
+  .sk06{--sk:#54c8ff;--skp:linear-gradient(rgba(120,200,255,.28) 1px,transparent 1px),linear-gradient(90deg,rgba(120,200,255,.28) 1px,transparent 1px);--sks:14px 14px,14px 14px;--skc:#0e2a4a}
+  .sk07{--sk:#d8c9a3;--skp:repeating-linear-gradient(90deg,rgba(216,201,163,.22) 0 2px,transparent 2px 7px),repeating-linear-gradient(0deg,rgba(0,0,0,.3) 0 1px,transparent 1px 9px);--skc:#33302a}
+  .sk08{--sk:#9aa6b2;--skp:repeating-linear-gradient(90deg,rgba(154,166,178,.32) 0 3px,rgba(0,0,0,.4) 3px 6px,transparent 6px 16px);--skc:#23282e}
+  .sk09{--sk:#ffc826;--skp:repeating-linear-gradient(135deg,rgba(255,200,38,.32) 0 12px,rgba(0,0,0,.5) 12px 24px);--skc:#241d05}
+  .sk10{--sk:#ff4438;--skp:repeating-linear-gradient(45deg,rgba(255,68,56,.30) 0 10px,transparent 10px 20px);--skc:#2a0f0c}
+  .sk11{--sk:#54c8ff;--skp:repeating-linear-gradient(0deg,rgba(84,200,255,.26) 0 1px,transparent 1px 5px);--skc:#06202b}
+  .sk12{--sk:#ff8a5c;--skp:repeating-linear-gradient(90deg,rgba(255,138,92,.28) 0 18px,transparent 18px 36px);--skc:#2b1608}
+  .sk13{--sk:#cfd6dd;--skp:linear-gradient(115deg,transparent 20%,rgba(255,255,255,.18) 30%,transparent 40%,rgba(255,255,255,.12) 55%,transparent 70%);--skc:#1d2126}
+  .sk14{--sk:#b98a5a;--skp:repeating-linear-gradient(0deg,rgba(185,138,90,.30) 0 5px,rgba(0,0,0,.35) 5px 7px,transparent 7px 14px);--skc:#241a10}
+  .sk15{--sk:#7fbf6a;--skp:repeating-linear-gradient(0deg,rgba(127,191,106,.26) 0 10px,transparent 10px 20px);--skc:#12240f}
+  .sk16{--sk:#ffd23f;--skp:repeating-radial-gradient(circle at 50% 50%,rgba(255,210,63,.24) 0 2px,transparent 2px 14px);--skc:#26200a}
+  .sk17{--sk:#b0b6be;--skp:repeating-linear-gradient(90deg,rgba(176,182,190,.30) 0 5px,transparent 5px 26px),linear-gradient(0deg,transparent 46%,rgba(176,182,190,.4) 46% 54%,transparent 54%);--skc:#1e2226}
+  .sk18{--sk:#ff5c8a;--skp:radial-gradient(rgba(255,92,138,.32) 2px,transparent 3px);--sks:18px 18px;--skc:#2b0f1c}
+  .sk19{--sk:#4a9dff;--skp:repeating-linear-gradient(0deg,rgba(74,157,255,.30) 0 2px,transparent 2px 8px);--skc:#0a1c33}
+  .sk20{--sk:#f5f2e8;--skp:repeating-linear-gradient(90deg,rgba(245,242,232,.20) 0 12px,rgba(0,0,0,.55) 12px 20px);--skc:#101010}
+  .sk21{--sk:#d4af37;--skp:radial-gradient(circle at 50% 0%,rgba(212,175,55,.32),transparent 60%),repeating-linear-gradient(0deg,rgba(212,175,55,.14) 0 1px,transparent 1px 6px);--skc:#241d07}
+  .sk22{--sk:#c99a12;--skp:repeating-linear-gradient(45deg,rgba(201,154,18,.26) 0 3px,transparent 3px 6px),repeating-linear-gradient(-45deg,rgba(201,154,18,.20) 0 3px,transparent 3px 6px);--skc:#241a05}
+  .sk23{--sk:#ff4438;--skp:radial-gradient(rgba(255,68,56,.32) 3px,transparent 4px);--sks:26px 26px;--skc:#26090a}
+  .sk24{--sk:#d8c9a3;--skp:repeating-linear-gradient(0deg,rgba(216,201,163,.22) 0 1px,transparent 1px 5px),repeating-linear-gradient(90deg,rgba(216,201,163,.12) 0 1px,transparent 1px 9px);--skc:#2e2818}
+  .sk25{--sk:#2ecc71;--skp:repeating-linear-gradient(45deg,rgba(46,204,113,.16) 0 8px,transparent 8px 16px),repeating-linear-gradient(-45deg,rgba(46,204,113,.16) 0 8px,transparent 8px 16px);--skc:#0d2418}
+  .sk26{--sk:#f5f2e8;--skp:repeating-linear-gradient(115deg,rgba(245,242,232,.16) 0 2px,transparent 2px 11px);--skc:#1c2430}
+  .sk27{--sk:#ffe9a8;--skp:radial-gradient(circle at 50% -10%,rgba(255,233,168,.38),transparent 55%);--skc:#26200f}
+  .sk28{--sk:#8b98a5;--skp:repeating-linear-gradient(0deg,rgba(139,152,165,.26) 0 1px,transparent 1px 7px),linear-gradient(90deg,rgba(139,152,165,.12) 1px,transparent 1px);--sks:auto,22px 100%;--skc:#1a1e22}
+  .sk29{--sk:#43e97b;--skp:radial-gradient(circle 3px at 8px 6px,rgba(255,106,94,.45) 98%,transparent),radial-gradient(circle 3px at 24px 14px,rgba(255,210,63,.45) 98%,transparent),radial-gradient(circle 3px at 40px 6px,rgba(67,233,123,.45) 98%,transparent),radial-gradient(circle 3px at 56px 14px,rgba(74,157,255,.45) 98%,transparent);--sks:64px 20px,64px 20px,64px 20px,64px 20px;--skc:#0d2013}
+  .sk30{--sk:#7fbf6a;--skp:repeating-linear-gradient(0deg,rgba(0,0,0,.5) 0 2px,transparent 2px 30px);--skc:#12241c}
+  .bay-body{background-color:var(--skc,#12161c)}
+
+  .solved-flag{display:none}
+  .bay.done .solved-flag{display:block;position:absolute;margin:34px 0 0 auto;right:10px;transform:rotate(6deg);
+    border:3px solid var(--green);color:var(--green);font-family:var(--disp);font-size:14px;
+    letter-spacing:.12em;padding:4px 12px;background:rgba(12,16,20,.9);animation:stampIn .4s cubic-bezier(.16,1.5,.3,1);
+    box-shadow:0 0 18px rgba(67,233,123,.35);z-index:6}
+  @keyframes stampIn{from{opacity:0;transform:rotate(6deg) scale(2)}to{opacity:1;transform:rotate(6deg) scale(1)}}
+
+  .mscreen{background:#04101a;border:1px solid #2b4a5a;border-radius:4px;color:#7ef0ff;
+    font-family:var(--disp);font-size:18px;letter-spacing:.18em;text-align:center;padding:7px 10px;
+    text-shadow:0 0 10px rgba(126,240,255,.6);box-shadow:inset 0 0 14px #000;flex:none;position:relative;overflow:hidden}
+  .mscreen::before{content:"";position:absolute;top:0;left:0;right:0;height:45%;
+    background:linear-gradient(180deg,rgba(255,255,255,.07),transparent);pointer-events:none}
+
+  .ctrl .bay-body{background:radial-gradient(circle at 50% 0%,rgba(255,214,140,.04),transparent 60%),linear-gradient(180deg,#2b323a,#1c2228);gap:11px}
+  .display7{background:#060709;border:2px solid #2a2f36;border-radius:6px;padding:8px 14px;text-align:center;
+    font-family:var(--mono);font-weight:700;font-size:42px;letter-spacing:7px;color:#ff2b1f;
+    text-shadow:0 0 14px rgba(255,43,31,.85),0 0 28px rgba(255,43,31,.4);
+    box-shadow:inset 0 0 24px #000,inset 0 0 0 1px #000,0 2px 6px rgba(0,0,0,.5);position:relative;overflow:hidden}
+  .display7::before{content:"";position:absolute;top:0;left:0;right:0;height:45%;
+    background:linear-gradient(180deg,rgba(255,255,255,.08),transparent);pointer-events:none}
+  .display7.danger{animation:blink 1s steps(1) infinite}
+  .display7 small{display:block;font-size:8px;letter-spacing:.34em;color:#7a2e28;text-shadow:none;margin-top:2px;position:relative;z-index:1}
+  .ctrl-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:10px;letter-spacing:.12em;color:#9aa4ad}
+  .ctrl-row .cap{color:#55606c;font-size:9px;letter-spacing:.24em;font-weight:700}
+  .plate-metal{background:linear-gradient(180deg,#e8ebef,#c0c6cd 50%,#a4aab2);color:#1c2126;padding:5px 11px;font-weight:700;
+    letter-spacing:.14em;font-size:11px;border:1px solid #6d747b;border-radius:3px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,0,0,.15),0 1px 0 rgba(255,255,255,.5)}
+  .sled{width:15px;height:15px;border-radius:50%;background:#33110e;border:1px solid #4a2019;box-shadow:inset 0 1px 2px #000}
+  .sled.used{background:radial-gradient(circle at 35% 30%,#ff6a5e,#8c2f27);box-shadow:0 0 14px #ff2b1f}
+  .indled{width:11px;height:11px;border-radius:50%;background:#1a1e24;border:1px solid #2a2f36;box-shadow:inset 0 1px 2px #000}
+  .indled.on{background:radial-gradient(circle at 35% 30%,#fff6a8,#c99a12);box-shadow:0 0 10px #ffd23f}
+  .bat{display:inline-block;width:26px;height:12px;border:1px solid #5d646b;border-radius:2px;margin-right:4px;position:relative;vertical-align:-2px;background:#1a1e24}
+  .bat::after{content:"";position:absolute;right:-4px;top:3px;width:3px;height:6px;background:#5d646b;border-radius:0 1px 1px 0}
+  .bat::before{content:"";position:absolute;left:2px;top:2px;bottom:2px;width:0;background:linear-gradient(90deg,#43c96e,#8fe6ab);border-radius:1px}
+  .bat.full::before{width:calc(100% - 4px)}
+  .bat-count{display:inline-block;color:#ffd23f;font-weight:700;font-size:11px;margin-left:3px;vertical-align:-2px}
+  .penalty{font-weight:700;color:var(--red);animation:blink .5s steps(1) 3}
+  #submitBtn{margin-top:auto;width:100%;padding:15px;border-radius:10px;border:2px solid #5a201c;
+    background:linear-gradient(180deg,#5a2822,#331713 50%,#1f0d0a);color:#7a4a45;font-family:var(--disp);font-size:13px;
+    letter-spacing:.18em;cursor:not-allowed;transition:all .3s}
+  #submitBtn.armed{background:radial-gradient(circle at 35% 30%,#ff6a5e 0%,#c22b21 60%,#7c1811 100%);
+    color:#fff;border-color:#7c1811;cursor:pointer;animation:pulse 1.2s ease-in-out infinite;
+    box-shadow:0 6px 0 #7c1811,0 10px 20px rgba(194,43,33,.35)}
+  #submitBtn.armed:active{transform:translateY(4px);box-shadow:0 2px 0 #7c1811}
+  @keyframes pulse{50%{box-shadow:0 6px 0 #7c1811,0 10px 20px rgba(194,43,33,.55)}}
+
+  .data{font-size:11px;color:#ffe9a8;letter-spacing:.08em;text-align:center;flex:none}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .opt{border:1.5px solid #5d6a78;background-color:#2b333d;
+    background-image:linear-gradient(180deg,rgba(255,255,255,.08),transparent);
+    font-family:var(--disp);font-size:15px;color:var(--ink);
+    padding:10px 8px;cursor:pointer;letter-spacing:.04em;position:relative;transition:all .18s;box-shadow:0 3px 0 #12171d}
+  .opt small{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.26em;color:var(--mut);margin-bottom:4px}
+  .opt:hover:not(:disabled){border-color:var(--sk,var(--yellow));color:var(--sk,var(--yellow));transform:translateY(-2px)}
+  .opt:active{transform:translateY(1px);box-shadow:0 1px 0 #12171d}
+  .opt.wrong{border-color:var(--red);color:var(--red);opacity:.55}
+  .opt.wrong::after{content:"✗";position:absolute;right:8px;top:4px;font-size:15px}
+  .opt.right{border-color:var(--green);color:var(--green)}
+  .opt.right::after{content:"✓";position:absolute;right:8px;top:4px;font-size:15px}
+  .opt.sel{border-color:var(--cyan);color:var(--cyan)}
+  .opt:disabled{cursor:default}
+  .c-red{color:#ff6a5e!important}.c-yellow{color:#ffd23f!important}.c-green{color:#43c96e!important}.c-blue{color:#4a9dff!important}
+
+  .vbtn{border:1.5px solid #5d6a78;background-color:#333c47;color:var(--ink);
+    font-family:var(--disp);font-size:11px;letter-spacing:.14em;padding:9px 16px;cursor:pointer;transition:all .18s;box-shadow:0 3px 0 #161c22}
+  .vbtn:hover{border-color:var(--sk,var(--yellow));color:var(--sk,var(--yellow))}
+  .vbtn:active{transform:translateY(2px);box-shadow:0 1px 0 #161c22}
+  .vbtn.ok{border-color:var(--green);color:var(--green)}
+
+  .wires{display:flex;flex-direction:column;gap:11px;justify-content:center;flex:1;padding:2px 18px}
+  .wire{position:relative;height:12px;cursor:crosshair;transition:transform .15s,filter .2s}
+  .wire::before,.wire::after{content:"";position:absolute;top:50%;width:9px;height:9px;border-radius:50%;
+    transform:translateY(-50%);background:#55606c;border:1px solid #98a4b1}
+  .wire::before{left:-14px}.wire::after{right:-14px}
+  .wire .body{display:block;height:100%;border-radius:7px;position:relative;
+    box-shadow:0 2px 5px rgba(0,0,0,.5),inset 0 2px 2px rgba(255,255,255,.4)}
+  .w-red .body{background:linear-gradient(180deg,#ff6a5e,#d63c31 60%,#8c2419)}
+  .w-yellow .body{background:linear-gradient(180deg,#ffe162,#e8b522 60%,#a07810)}
+  .w-blue .body{background:linear-gradient(180deg,#6ab4ff,#3a6fc4 60%,#1e4380)}
+  .w-green .body{background:linear-gradient(180deg,#7cf5a0,#3f9e5f 60%,#1d5c34)}
+  .w-white .body{background:linear-gradient(180deg,#ffffff,#e9e7de 60%,#a8a598)}
+  .wire:hover{transform:scaleX(1.02)}
+  .wire.cut{filter:grayscale(.6)}
+  .wire.cut .body::after{content:"";position:absolute;left:30%;top:-8px;width:4px;height:27px;background:var(--red);
+    transform:rotate(18deg);box-shadow:7px 2px 0 rgba(255,68,56,.6)}
+  .wire.shake{animation:shakeX .3s}
+  @keyframes shakeX{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+  .code-screen{display:flex;gap:7px;justify-content:center;background-color:#060b10;border:1px solid #46525f;
+    padding:8px;box-shadow:inset 0 0 18px rgba(0,0,0,.85);flex:none}
+  .code-cell{width:32px;height:38px;border:1px solid #35455a;display:grid;place-items:center;
+    font-family:var(--disp);font-size:19px;color:var(--cyan);background:#0d1720;text-shadow:0 0 12px rgba(84,200,255,.6)}
+  .code-cell.dim{color:#c6d2dd;text-shadow:none;font-size:14px}
+  .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:220px;margin:0 auto;width:100%;flex:none}
+  .key{border:1px solid #5d6a78;background-color:#333c47;font-family:var(--disp);font-size:14px;padding:7px 0;
+    cursor:pointer;color:var(--ink);transition:all .15s;box-shadow:0 3px 0 #12171d}
+  .key:hover{color:var(--cyan);border-color:rgba(84,200,255,.6)}
+  .key:active{transform:translateY(2px);box-shadow:0 1px 0 #12171d}
+  .key.op{font-family:var(--mono);font-size:11px}
+  .keypad.shake{animation:shakeX .3s}
+
+  .sw-row{display:flex;gap:15px;justify-content:center;align-items:center;padding-top:16px}
+  .sw{width:28px;height:56px;border:1.5px solid #5d6a78;background:#161d25;position:relative;cursor:pointer;flex:none;
+    box-shadow:inset 0 3px 8px rgba(0,0,0,.7)}
+  .sw i{position:absolute;left:3px;right:3px;height:22px;background:linear-gradient(180deg,#c0c6cd,#8b929a 50%,#5b6774);
+    bottom:4px;transition:bottom .15s;border-radius:2px}
+  .sw.on i{bottom:calc(100% - 26px);background:linear-gradient(180deg,#ffe162,#c99a12 60%,#8a6a08)}
+  .sw-num{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--mut)}
+  .sw-holder{text-align:center;margin-top:8px}
+
+  .knob-wrap{display:flex;align-items:center;justify-content:center;gap:22px;flex:1}
+  .knob{width:108px;height:108px;border-radius:50%;position:relative;flex:none;
+    background:radial-gradient(circle at 35% 30%,#68737f,#2c3540 72%);
+    border:3px solid #8b96a4;box-shadow:0 8px 22px rgba(0,0,0,.5)}
+  .knob-ptr{position:absolute;left:50%;top:50%;width:6px;height:41px;background:var(--sk,var(--yellow));
+    transform-origin:50% 100%;border-radius:3px;
+    transform:translate(-50%,-100%) rotate(var(--rot,0deg));transition:transform .25s}
+  .knob-dot{position:absolute;left:50%;top:50%;width:14px;height:14px;border-radius:50%;background:#12171d;
+    transform:translate(-50%,-50%);border:2px solid #8b96a4}
+  .tick{position:absolute;left:50%;top:50%;font-size:10px;color:#e6ecf2}
+
+  .lever-row{display:flex;gap:8px;justify-content:center;align-items:flex-end;flex:1}
+  .slot{width:50px;height:64px;border:1.5px solid #5d6a78;background:#161d25;cursor:pointer;position:relative;
+    transition:all .2s;box-shadow:inset 0 3px 8px rgba(0,0,0,.7)}
+  .slot span{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--mut)}
+  .slot.here{border-color:var(--sk,var(--yellow));box-shadow:0 0 16px rgba(255,200,38,.3)}
+  .slot.here::before{content:"";position:absolute;left:50%;top:8px;transform:translateX(-50%);
+    width:15px;height:32px;background:linear-gradient(180deg,#ffd23f,#c99a12);border-radius:3px}
+
+  .hold-btn{width:94px;height:94px;border-radius:50%;border:none;cursor:pointer;font-family:var(--disp);
+    font-size:12px;color:#fff;background:radial-gradient(circle at 34% 30%,#ff6a5e,#c22b21 70%);
+    box-shadow:0 7px 0 #7c1811,0 14px 26px rgba(0,0,0,.5);transition:transform .1s;touch-action:none;flex:none}
+  .hold-btn:active,.hold-btn.holding{transform:translateY(6px);box-shadow:0 1px 0 #7c1811}
+  .hold-btn.blue{background:radial-gradient(circle at 34% 30%,#6ab4ff,#2160c2 70%);box-shadow:0 7px 0 #113a7c}
+  .hold-row{display:flex;align-items:center;justify-content:center;gap:28px;flex:1;flex-wrap:wrap}
+  .lamp{width:32px;height:32px;border-radius:50%;border:2px solid #5d6a78;background:#1c232b;transition:background .1s;flex:none}
+  .lamp.lit-y{background:radial-gradient(circle at 35% 30%,#fff6a8,#ffd23f 60%,#c99a12);box-shadow:0 0 22px #ffd23f}
+  .lamp.lit-r{background:radial-gradient(circle at 35% 30%,#ffa098,#ff4438 60%,#8c1a11);box-shadow:0 0 22px #ff4438}
+  .lamp.lit-g{background:radial-gradient(circle at 35% 30%,#b8f5ce,#43c96e 60%,#1d7a3e);box-shadow:0 0 22px #43c96e}
+  .lamp.lit-b{background:radial-gradient(circle at 35% 30%,#b3d9ff,#4a9dff 60%,#1656a8);box-shadow:0 0 22px #4a9dff}
+  .lamp-block{display:flex;flex-direction:column;align-items:center;gap:9px}
+  .lamp-block span{font-size:8px;letter-spacing:.3em;color:var(--mut)}
+
+  .flashpad{width:58px;height:58px;border:2px solid #5d6a78;background:#1c232b;margin:0 auto;transition:all .12s;flex:none}
+  .flashpad.f-r{background:radial-gradient(circle at 35% 30%,#ffa098,#ff4438 60%,#8c1a11);box-shadow:0 0 26px #ff4438}
+  .flashpad.f-y{background:radial-gradient(circle at 35% 30%,#fff6a8,#ffd23f 60%,#c99a12);box-shadow:0 0 26px #ffd23f}
+  .flashpad.f-g{background:radial-gradient(circle at 35% 30%,#b8f5ce,#43c96e 60%,#1d7a3e);box-shadow:0 0 26px #43c96e}
+  .flashpad.f-b{background:radial-gradient(circle at 35% 30%,#b3d9ff,#4a9dff 60%,#1656a8);box-shadow:0 0 26px #4a9dff}
+
+  .morse-lamp{width:46px;height:46px;border-radius:50%;border:2px solid #5d6a78;background:#1c232b;margin:0 auto;transition:all .08s}
+  .morse-lamp.on{background:radial-gradient(circle at 35% 30%,#fff6a8,#ffd23f 60%,#c99a12);box-shadow:0 0 30px #ffd23f}
+
+  .lamps-row{display:flex;gap:15px;justify-content:center;align-items:center;flex:1}
+  .mini-lamp{width:28px;height:28px;border-radius:50%;border:2px solid #5d6a78;background:#1c232b;cursor:pointer;transition:all .15s}
+  .mini-lamp.on{background:radial-gradient(circle at 35% 30%,#fff6a8,#ffd23f 60%,#c99a12);box-shadow:0 0 16px #ffd23f}
+
+  .dice{font-size:34px;letter-spacing:.2em;text-align:center;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.4)}
+
+  .board-footer{position:absolute;bottom:8px;left:0;right:0;display:flex;justify-content:space-between;
+    padding:0 28px;font-size:7px;letter-spacing:.2em;color:rgba(86,92,100,.55);text-shadow:0 1px 0 rgba(255,255,255,.4);pointer-events:none}
+  .board-footer .warn{color:#8c2419;font-weight:700}
+
+  .overlay{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(8,11,15,.9);
+    opacity:0;pointer-events:none;transition:opacity .3s}
+  .overlay.show{opacity:1;pointer-events:auto}
+  .ov-frame{border:4px double currentColor;padding:26px 44px;transform:rotate(-3deg)}
+  .ov-big{font-family:var(--disp);font-size:clamp(40px,8vw,78px);letter-spacing:.06em;line-height:1.05}
+  .ov-sub{font-size:12px;letter-spacing:.3em;margin-top:14px}
+  .ov-stats{margin:26px 0 6px;font-size:12px;letter-spacing:.14em;color:var(--mut);line-height:2.1}
+  .ov-stats b{color:var(--ink)}
+  .ov-btns{display:flex;gap:14px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+  .ov-btns a,.ov-btns button{font-family:var(--disp);font-size:13px;letter-spacing:.1em;padding:14px 26px;
+    cursor:pointer;border:2px solid var(--yellow);background:var(--yellow);color:#141414;text-decoration:none;
+    clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));transition:all .2s}
+  .ov-btns .ghost{background:transparent;color:var(--yellow)}
+  .st-green{color:#5ee38a}.st-red{color:var(--red)}
+  .count{font-family:var(--disp);font-size:clamp(90px,18vw,170px);color:var(--yellow);
+    text-shadow:0 0 40px rgba(255,200,38,.4);animation:countPop .9s ease-out}
+  .count.go{color:var(--green);font-size:clamp(40px,9vw,90px)}
+  @keyframes countPop{from{transform:scale(1.7);opacity:0}}
+
+  #toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);z-index:95;
+    background:#161d25;border:1px solid var(--line);color:var(--ink);font-size:12px;letter-spacing:.1em;
+    padding:11px 22px;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;max-width:92vw}
+  #toast.show{opacity:1;transform:translateX(-50%)}
+  #toast.err{border-color:rgba(255,68,56,.5);color:#ffb3ad}
+  #toast.ok{border-color:rgba(67,233,123,.5);color:#a9f4c4}
+
+  @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s!important;transition-duration:.001s!important}}
 </style>
 </head>
 <body>
 
 <div class="scanlines"></div>
-<div class="watermark"><span>СОВ. СЕКРЕТНО</span></div>
-<div class="hazard"></div>
 
-<header>
-  <div class="h-left">
-    <svg class="book" viewBox="0 0 120 120" fill="none" aria-hidden="true">
-      <path d="M60 26 C48 16 30 14 14 18 V96 C30 92 48 94 60 102 C72 94 90 92 106 96 V18 C90 14 72 16 60 26 Z" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
-      <line x1="60" y1="26" x2="60" y2="102" stroke="currentColor" stroke-width="4"/>
-    </svg>
-    <div class="h-title">МАНУАЛ САПЁРА
-      <small>30 МОДУЛЕЙ · УСТРОЙСТВО МК-45-Б · ИЗД. 2026 · ФОРМА 45-Б</small>
-    </div>
+<header class="topbar">
+  <div class="tb-title">ПУЛЬТ ИГРОКА 1 · СТУДЕНТ
+    <small>УСТРОЙСТВО МК-45-Б · 5 МОДУЛЕЙ ИЗ 30 · НЕ СМОТРЕТЬ В МАНУАЛ</small>
   </div>
-  <div class="h-right">
-    <span class="chip p2">ИГРОК 2 · МАНУАЛ</span>
-    <span class="chip clock" id="clock">--:--:--</span>
-    <a class="home" href="index.html">◂ ГЛАВНЫЙ ЭКРАН</a>
+  <div class="tb-right">
+    <span class="chip">РЕШЕНО: <b id="prog">0/5</b></span>
+    <a class="home" href="index.html">◂ МЕНЮ</a>
   </div>
 </header>
 
-<div class="warnbar">ЧИТАЙТЕ ПРАВИЛА ВСЛУХ. НЕ СМОТРИТЕ НА ЭКРАН ИГРОКА 1 — ОТЧИСЛЯТ ОБОИХ</div>
-
-<main class="doc">
-  <nav class="toc">
-    <h2>ОГЛАВЛЕНИЕ</h2>
-    <a href="#s00"><b>00</b>Регламент и связь</a>
-    <a href="#s01"><b>01</b>Паспорт и признаки</a>
-    <a href="#s02"><b>02</b>Опознание модулей</a>
-    <a href="#s03"><b>03</b>Динамика и раунды</a>
-    <a href="#ch1"><b>I</b>Модули 01–07</a>
-    <a href="#ch2"><b>II</b>Модули 08–10</a>
-    <a href="#ch3"><b>III</b>Модули 11–13</a>
-    <a href="#ch4"><b>IV</b>Модули 14–17</a>
-    <a href="#ch5"><b>V</b>Модули 18–20</a>
-    <a href="#ch6"><b>VI</b>Модули 21–30</a>
-    <a href="#appA"><b>А</b>Цвета варианта</a>
-    <a href="#appB"><b>Б</b>Морзе</a>
-    <a href="#appC"><b>В</b>Символы</a>
-    <a href="#appD"><b>Г</b>Паника</a>
-  </nav>
-
-  <article>
-
-    <section class="sec" id="s00">
-      <div class="sec-head"><span class="sec-num">00</span><h2>РЕГЛАМЕНТ И СВЯЗЬ</h2><span class="tag">ЧИТАТЬ ПЕРВЫМ</span></div>
-      <div class="sec-body">
-        Устройство молчит, студент паникует, а вся надежда на вас и эту книгу. Держитесь: ниже всё разложено по полочкам,
-        и ни одна полка не подписана «на удачу».
-        <div class="rule">На устройстве <b>12:00</b>. Ошибка — <b>−1:00</b> и отметка. <span class="imp">Три ошибки или ноль на табло = отчисление.</span>
-        Все 5 модулей решены — студент жмёт «СДАТЬ РАБОТУ».</div>
-        <div class="rule"><b>Протокол связи:</b>
-        <span class="step"><b>1.</b> Студент диктует паспорт: серию, вариант, батареи, индикаторы.</span>
-        <span class="step"><b>2.</b> Студент диктует для каждого модуля: <b>глиф</b>, <b>фактуру панели</b> и <b>плату</b> (буква и метки) — вы находите задание по §02.</span>
-        <span class="step"><b>3.</b> Если у модуля есть экран запросов, студент читает каждое его значение вслух и ждёт вашей команды (§03).</span>
-        <span class="step"><b>4.</b> После ошибки: «ошибка N, осталось MM:SS». После решения: «решено K из 5».</span>
-        <span class="step"><b>5.</b> Реальную минуту вы смотрите на своих часах.</span></div>
-        <div class="rule"><b>Гласные серии:</b> А, Е, И, О, У, Ы. Остальные буквы — согласные.</div>
-      </div>
-    </section>
-
-    <section class="sec" id="s01">
-      <div class="sec-head"><span class="sec-num">01</span><h2>ПАСПОРТ И ПРИЗНАКИ</h2><span class="tag">ДАННЫЕ</span></div>
-      <div class="sec-body">
-        <div class="rule"><b>Паспорт теста</b> (центральный пульт): серия <span class="formula">ББ-ЦЦЦ-Б</span>, вариант 1–4, батареи 0–3, индикаторы ЗВ/РУ/КО.</div>
-        <div class="rule"><b>Признаки модуля</b> (шильдик модуля): <b>ПЛАТА</b> — буква А–Д и метки • (1–3 штуки).
-        Буква платы даёт индекс L: А=0, Б=1, В=2, Г=3, Д=4. Метки дают число P = их количество.
-        Эти два числа входят во многие формулы — спрашивайте их сразу вместе с глифом.</div>
-        <div class="rule"><b>Производные серии:</b> сумма трёх цифр; последняя цифра; чётных/нечётных цифр (0 — чётное); число гласных букв; последняя буква.</div>
-      </div>
-    </section>
-
-    <section class="sec" id="s02">
-      <div class="sec-head"><span class="sec-num">02</span><h2>ОПОЗНАНИЕ МОДУЛЕЙ</h2><span class="tag">ГЛИФ + ФАКТУРА</span></div>
-      <div class="sec-body">
-        Названий на устройстве нет. Модуль опознаётся по трём признакам: глиф на шильдике, фактура панели и цветная кромка сверху.
-        В углу панели всегда продублирован крупный водяной глиф — если студент сомневается, пусть посмотрит в угол.
-        <table>
-          <tr><th>ГЛИФ</th><th>ФАКТУРА ПАНЕЛИ</th><th>КРОМКА</th><th>ЗАДАНИЕ</th></tr>
-          <tr><td><b>◆</b></td><td>широкие янтарные диагонали</td><td>янтарная</td><td>01</td></tr>
-          <tr><td><b>∑</b></td><td>зелёная плата: точки и вертикальная дорожка</td><td>зелёная</td><td>02</td></tr>
-          <tr><td><b>π</b></td><td>четыре цветные вертикальные полосы</td><td>красная</td><td>03</td></tr>
-          <tr><td><b>≡</b></td><td>перфорированная лента: точки слева, линии</td><td>белая</td><td>04</td></tr>
-          <tr><td><b>Φ</b></td><td>концентрические матовые круги</td><td>серо-бежевая</td><td>05</td></tr>
-          <tr><td><b>÷</b></td><td>синяя миллиметровка</td><td>голубая</td><td>06</td></tr>
-          <tr><td><b>∩</b></td><td>каменные вертикальные штрихи</td><td>бежевая</td><td>07</td></tr>
-          <tr><td><b>#</b></td><td>металлические рёбра клемм</td><td>стальная</td><td>08</td></tr>
-          <tr><td><b>§</b></td><td>жёлто-чёрная аварийная диагональ</td><td>жёлтая</td><td>09</td></tr>
-          <tr><td><b>‡</b></td><td>красные аварийные диагонали</td><td>красная</td><td>10</td></tr>
-          <tr><td><b>µ</b></td><td>голубая строчная развёртка</td><td>голубая</td><td>11</td></tr>
-          <tr><td><b>°</b></td><td>широкие оранжевые полосы</td><td>оранжевая</td><td>12</td></tr>
-          <tr><td><b>±</b></td><td>зеркальные диагональные блики</td><td>серебряная</td><td>13</td></tr>
-          <tr><td><b>√</b></td><td>коричневые бакелитовые рёбра</td><td>коричневая</td><td>14</td></tr>
-          <tr><td><b>∞</b></td><td>зелёные горизонтальные полосы</td><td>зелёная</td><td>15</td></tr>
-          <tr><td><b>≈</b></td><td>концентрические жёлтые кольца</td><td>жёлтая</td><td>16</td></tr>
-          <tr><td><b>◐</b></td><td>рельсовые шпалы с центральной линией</td><td>стальная</td><td>17</td></tr>
-          <tr><td><b>◑</b></td><td>розовые точки</td><td>розовая</td><td>18</td></tr>
-          <tr><td><b>◒</b></td><td>синие тонкие строки</td><td>синяя</td><td>19</td></tr>
-          <tr><td><b>◓</b></td><td>клавишные чёрно-белые полосы</td><td>белая</td><td>20</td></tr>
-          <tr><td><b>★</b></td><td>золотое свечение сверху с линиями</td><td>золотая</td><td>21</td></tr>
-          <tr><td><b>☆</b></td><td>золотая диагональная сетка</td><td>золотая</td><td>22</td></tr>
-          <tr><td><b>■</b></td><td>крупные красные точки</td><td>красная</td><td>23</td></tr>
-          <tr><td><b>□</b></td><td>пергаментная двойная сетка</td><td>бежевая</td><td>24</td></tr>
-          <tr><td><b>▲</b></td><td>зелёная ромбовая сетка сукна</td><td>зелёная</td><td>25</td></tr>
-          <tr><td><b>△</b></td><td>меловые диагональные штрихи</td><td>белая</td><td>26</td></tr>
-          <tr><td><b>▼</b></td><td>конус тёплого света сверху</td><td>тёпло-жёлтая</td><td>27</td></tr>
-          <tr><td><b>▽</b></td><td>серые LCD-линии</td><td>серая</td><td>28</td></tr>
-          <tr><td><b>◈</b></td><td>гирлянда разноцветных точек</td><td>зелёная</td><td>29</td></tr>
-          <tr><td><b>◇</b></td><td>классная доска с редкими линиями</td><td>зелёная</td><td>30</td></tr>
-        </table>
-      </div>
-    </section>
-
-    <section class="sec" id="s03">
-      <div class="sec-head"><span class="sec-num">03</span><h2>ДИНАМИКА И РАУНДЫ</h2><span class="tag">ВАЖНО</span></div>
-      <div class="sec-body">
-        <div class="rule"><b>Экраны запросов.</b> Некоторые модули (01, 06, 11, 16, 21, 24, 30) работают в несколько раундов:
-        на их экране горит значение (запрос, шифр, смещение, пара чисел, режим). Студент читает его вслух — вы применяете формулу
-        и диктуете действие. После верного действия экран показывает <b>новое</b> значение, и круг повторяется.
-        Неверное действие значения не меняет: экран терпелив, деканат — нет.</div>
-        <div class="rule"><b>ТАБЛО</b> — остаток минут на устройстве. Спрашивайте перед каждым решением таких правил.</div>
-        <div class="rule"><b>ЧАСЫ</b> — чётность реальной минуты на ваших часах в момент действия.</div>
-        <div class="rule"><b>СЧЁТ</b> — число решённых модулей и число ошибок; студент объявляет их после каждого события.</div>
-        <div class="rule"><b>Вариативность.</b> Число проводов, кнопок, ламп, тумблеров, делений, кубиков и цифр кода меняется от партии к партии.
-        <span class="imp">Элементов всегда достаточно для решения.</span> Пересчитывайте их со слов студента перед применением формул.</div>
-      </div>
-    </section>
-
-    <section class="sec" id="ch1">
-      <div class="sec-head"><span class="sec-num">I</span><h2>МОДУЛИ 01–07</h2><span class="tag">ВЫБОР</span></div>
-      <div class="sec-body">
-
-        <div class="te"><div class="te-head"><span class="te-glyph">◆</span><span class="te-title">01 · ЭКРАН ЗАПРОСОВ</span><span class="te-id">2 РАУНДА</span></div>
-        <div class="te-body"><span class="rec">Экран «ЗАПРОС n: R», четыре кнопки А–Г.</span>
-        <span class="step">Раунд 1: индекс кнопки = (R + батареи + L) mod 4.</span>
-        <span class="step">Раунд 2: индекс = (R + P + вариант) mod 4. Отсчёт кнопок с нуля: А=0, Б=1, В=2, Г=3.</span>
-        <span class="var">ВАРИАТИВНО: значения R меняются между раундами.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">∑</span><span class="te-title">02 · СУММЫ ЦИФР</span><span class="te-id">ТАБЛО</span></div>
-        <div class="te-body"><span class="rec">Кнопки с числами без подписей.</span>
-        <span class="step">Суммы цифр каждого числа. ТАБЛО &lt; 4 минут в момент нажатия → цель инвертируется.</span>
-        <span class="step">База: вариант нечётный → наибольшая сумма; чётный → наименьшая.</span>
-        <span class="step">Равенство сумм: P нечётное → первое слева; P чётное → последнее справа.</span>
-        <span class="var">ВАРИАТИВНО: 4 или 5 чисел.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">π</span><span class="te-title">03 · ЦВЕТНОЙ КРУГ</span><span class="te-id">СЧЁТ</span></div>
-        <div class="te-body"><span class="rec">Четыре цветные кнопки.</span>
-        <span class="step">Круг позиций: 0 жёлтый, 1 красный, 2 зелёный, 3 синий. База по батареям: 0→1, 1→0, 2→2, 3→3.</span>
-        <span class="step">СЧЁТ: сдвинуть базу вперёд на число решённых модулей (mod 4).</span>
-        <span class="step">ПЛАТА: L ∈ {А, В, Д} → сдвинуть ещё на 1. КО горит → отзеркалить (p → 3−p).</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">≡</span><span class="te-title">04 · ЛЕНТА ЧЁТНОСТИ</span><span class="te-id">СЧЁТ</span></div>
-        <div class="te-body"><span class="rec">Ряд чисел и кнопка проверки.</span>
-        <span class="step">Инверсии складываются: ЗВ горит (+1), решённых ≥3 (+1), L нечётное (Б или Г) (+1).</span>
-        <span class="step">База: последняя цифра серии чётная → отмечать чётные. Нечётное число инверсий → противоположную чётность.</span>
-        <span class="imp">Отметить все подходящие и ни одного лишнего.</span>
-        <span class="var">ВАРИАТИВНО: 6 или 8 чисел.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">Φ</span><span class="te-title">05 <span style="opacity:.6">·</span> КЛАВИШИ БУКВ</span><span class="te-id">ТАБЛО</span></div>
-        <div class="te-body"><span class="rec">Круглые клавиши с буквами.</span>
-        <span class="step">Инверсии: РУ горит (+1), ТАБЛО-минуты чётные (+1), P = 3 (+1).</span>
-        <span class="step">База: гласных в серии 0–1 → искать гласную; 2–3 → согласную. Нечётная сумма инверсий → противоположный тип.</span>
-        <span class="var">ВАРИАТИВНО: 4 или 6 клавиш.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">÷</span><span class="te-title">06 · ЭКРАН РЕЖИМА</span><span class="te-id">ЧАСЫ</span></div>
-        <div class="te-body"><span class="rec">Экран «РЕЖИМ ФИЛЬТРА: Q» и дроби.</span>
-        <span class="step">Q=1 → фильтр по КО (горит → &gt;1, иначе &lt;1). Q=2 → фильтр по ЗВ (горит → &gt;1, иначе &lt;1). Q=3 → фильтр выключен, все дроби.</span>
-        <span class="step">Шаг: вариант чётный → меньшая по значению из группы; нечётный → большая. ЧАСЫ: минута чётная → инвертировать шаг.</span>
-        <span class="var">ВАРИАТИВНО: 4 или 6 дробей.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">∩</span><span class="te-title">07 · КАМЕННЫЕ ЧИСЛА</span><span class="te-id">СЧЁТ</span></div>
-        <div class="te-body"><span class="rec">Римские числа.</span>
-        <span class="step">СЧЁТ: решённых mod 3 = 2 → медиана (середина сортированного списка, при чётном числе — нижняя).</span>
-        <span class="step">ПЛАТА: P = 2 и КО горит → тоже медиана.</span>
-        <span class="step">Иначе: КО горит → инвертировать базу. База: первая цифра серии чётная → наименьшее, нечётная → наибольшее.</span>
-        <span class="var">ВАРИАТИВНО: 4 или 5 чисел.</span></div></div>
-
-      </div>
-    </section>
-
-    <section class="sec" id="ch2">
-      <div class="sec-head"><span class="sec-num">II</span><h2>МОДУЛИ 08–10</h2><span class="tag">ПРОВОДА</span></div>
-      <div class="sec-body">
-        Цвета: <span class="sw" style="background:#d63c31"></span>красный, <span class="sw" style="background:#e8b522"></span>жёлтый,
-        <span class="sw" style="background:#3a6fc4"></span>синий, <span class="sw" style="background:#3f9e5f"></span>зелёный,
-        <span class="sw" style="background:#e9e7de;border:1px solid #888"></span>белый. Диктуйте по одному проводу.
-
-        <div class="te"><div class="te-head"><span class="te-glyph">#</span><span class="te-title">08 · КЛЕММЫ</span><span class="te-id">ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Провода: четыре цветных всегда плюс 0–2 белых.</span>
-        <span class="step">Инверсии пары: РУ горит (+1), L ∈ {Б, Г} (+1). Нечётная сумма → поменять тёплую и холодную пары местами.</span>
-        <span class="step">База: последняя цифра серии чётная → красный и жёлтый; нечётная → синий и зелёный. Белые не трогать.</span>
-        <span class="var">ВАРИАТИВНО: 4–6 проводов, нужная пара есть всегда.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">§</span><span class="te-title">09 · ПОРЯДОК</span><span class="te-id">ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Провода зачёркиваются по порядку.</span>
-        <span class="step">Таблица варианта (ниже). Берутся первые столько цветов, сколько проводов на панели (4 или 5).</span>
-        <span class="step">Реверсы: ЗВ горит (+1), P = 3 (+1). Нечётная сумма → читать выбранный кусок снизу вверх.</span>
-        <table>
-          <tr><th>ШАГ</th><th>ВАР. 1</th><th>ВАР. 2</th><th>ВАР. 3</th><th>ВАР. 4</th></tr>
-          <tr><td>1</td><td>белый</td><td>красный</td><td>зелёный</td><td>жёлтый</td></tr>
-          <tr><td>2</td><td>красный</td><td>жёлтый</td><td>синий</td><td>зелёный</td></tr>
-          <tr><td>3</td><td>синий</td><td>зелёный</td><td>белый</td><td>красный</td></tr>
-          <tr><td>4</td><td>жёлтый</td><td>синий</td><td>красный</td><td>белый</td></tr>
-          <tr><td>5</td><td>зелёный</td><td>белый</td><td>жёлтый</td><td>синий</td></tr>
-        </table>
-        <span class="imp">Ошибка сбрасывает прогресс до первого шага.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">‡</span><span class="te-title">10 · НЕСУЩИЙ ПРОВОД</span><span class="te-id">ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Провода: четыре цветных плюс 1–2 белых.</span>
-        <span class="step">Несущий: КО горит → по последней цифре серии (0,4,8 жёлтый; 1,5,9 красный; 2,6 зелёный; 3,7 синий).
-        Иначе: L = Д → белый. Иначе → цвет варианта (Приложение А).</span>
-        <span class="step">Зачеркнуть все остальные, включая белые.</span>
-        <span class="var">ВАРИАТИВНО: 5 или 6 проводов.</span></div></div>
-      </div>
-    </section>
-
-    <section class="sec" id="ch3">
-      <div class="sec-head"><span class="sec-num">III</span><h2>МОДУЛИ 11–13</h2><span class="tag">КОДЫ</span></div>
-      <div class="sec-body">
-
-        <div class="te"><div class="te-head"><span class="te-glyph">µ</span><span class="te-title">11 · ДВА ШИФРА</span><span class="te-id">2 РАУНДА</span></div>
-        <div class="te-body"><span class="rec">Экран «ШИФР n: xxxx · СДВИГ s», клавиатура на 4 цифры.</span>
-        <span class="step">Раунд 1: каждую цифру шифра + s (mod 10), порядок прямой; затем РУ горит → каждая цифра 9−d.</span>
-        <span class="step">Раунд 2: каждую цифру + s (mod 10), затем <b>реверс порядка</b>, затем РУ горит → 9−d.</span>
-        <span class="var">ВАРИАТИВНО: s и шифры новые в каждом раунде.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">°</span><span class="te-title">12 · КОРОТКИЙ КОД</span><span class="te-id">СЧЁТ</span></div>
-        <div class="te-body"><span class="rec">Клавиатура на 3 цифры.</span>
-        <span class="step">Сырой код: 1-я = (батареи + гласные) mod 10; 2-я = последняя цифра серии; 3-я = (вариант × последняя цифра) mod 10.</span>
-        <span class="step">Реверсы: ЗВ горит (+1), решённых ≥2 (+1), P = 1 (+1). Нечётная сумма → читать код задом наперёд.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">±</span><span class="te-title">13 · ЗЕРКАЛО</span><span class="te-id">ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Шифрограмма светится на панели — это данные.</span>
-        <span class="step">РУ и КО оба горят → каждая цифра +2 (mod 10), порядок прямой.</span>
-        <span class="step">Только РУ → каждая цифра +1 (mod 10), порядок прямой.</span>
-        <span class="step">Иначе → порядок обратный; дополнительно P = 3 → после реверса каждая цифра +1 (mod 10).</span>
-        <span class="var">ВАРИАТИВНО: шифрограмма и клавиатура на 4 или 5 цифр.</span></div></div>
-      </div>
-    </section>
-
-    <section class="sec" id="ch4">
-      <div class="sec-head"><span class="sec-num">IV</span><h2>МОДУЛИ 14–17</h2><span class="tag">РЕГУЛЯТОРЫ</span></div>
-      <div class="sec-body">
-
-        <div class="te"><div class="te-head"><span class="te-glyph">√</span><span class="te-title">14 · ДВОИЧНЫЙ КОД</span><span class="te-id">ЧАСЫ + ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Ряд тумблеров и проверка.</span>
-        <span class="step">N = (сумма цифр серии × вариант) mod 2^k, k = число тумблеров. КО горит → инвертировать все биты.</span>
-        <span class="step">Порядок битов: ЧАСЫ-минута чётная XOR L ∈ {А, В} → тумблер 1 = младший бит; иначе тумблер 1 = старший.</span>
-        <span class="var">ВАРИАТИВНО: 5 или 6 тумблеров.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">∞</span><span class="te-title">15 · ТРИ ТУМБЛЕРА</span><span class="te-id">СЧЁТ</span></div>
-        <div class="te-body"><span class="rec">Три тумблера.</span>
-        <span class="step">База: i-я цифра серии нечётная → тумблер i вверх; чётная → вниз.</span>
-        <span class="step">Инверсии: РУ горит (+1), решённых чётное число (+1), P = 2 (+1). Нечётная сумма → все положения наоборот.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">≈</span><span class="te-title">16 · ЭКРАН СМЕЩЕНИЙ</span><span class="te-id">2 РАУНДА</span></div>
-        <div class="te-body"><span class="rec">Экран «СМЕЩЕНИЕ n: o», крутилка с делениями и «ГОТОВО».</span>
-        <span class="step">Раунд 1: цель = (o + батареи) mod Pm. Раунд 2: цель = ((o − вариант) mod Pm + Pm) mod Pm. Pm = число делений.</span>
-        <span class="step">ЗВ горит → цель = (Pm − 1 − цель) mod Pm (в обоих раундах).</span>
-        <span class="var">ВАРИАТИВНО: 6 или 8 делений, случайный старт стрелки.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">◐</span><span class="te-title">17 · РЫЧАГ</span><span class="te-id">ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Гнёзда рычага.</span>
-        <span class="step">Слот = ((вариант − 1) + ЗВ + КО + РУ + (P − 1)) mod S + 1, где S = число гнёзд, индикаторы = 1 если горят.</span>
-        <span class="var">ВАРИАТИВНО: 4 или 5 гнёзд.</span></div></div>
-      </div>
-    </section>
-
-    <section class="sec" id="ch5">
-      <div class="sec-head"><span class="sec-num">V</span><h2>МОДУЛИ 18–20</h2><span class="tag">КНОПКИ</span></div>
-      <div class="sec-body">
-
-        <div class="te"><div class="te-head"><span class="te-glyph">◑</span><span class="te-title">18 · УДЕРЖАНИЕ НА ЦВЕТЕ</span><span class="te-id">СЧЁТ + ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Круглая кнопка и лампа.</span>
-        <span class="step">Индекс цвета в кругу [жёлтый, красный, зелёный, синий]: КО горит → сумма цифр серии mod 4; иначе индекс цвета варианта (ж=0, к=1, з=2, с=3).</span>
-        <span class="step">СЧЁТ: решённых нечётное число → +2. ПЛАТА: L ∈ {Б, Г} → +1. Всё mod 4.</span>
-        <span class="imp">Держать больше полусекунды, отпустить на целевом цвете.</span>
-        <span class="var">ВАРИАТИВНО: скорость мигания лампы.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">◒</span><span class="te-title">19 · СЧЁТ ВСПЫШЕК</span><span class="te-id">ЧАСЫ + ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Синяя кнопка и лампа.</span>
-        <span class="step">N = вариант + (КО ? 2 : 0) + (ЗВ ? 1 : 0) + (P − 1). ЧАСЫ: минута чётная → N + 1.</span>
-        <span class="step">РУ горит → считать паузы между вспышками (вспышек на одну больше).</span>
-        <span class="step">Отпускать сразу после N-го считанного события.</span>
-        <span class="var">ВАРИАТИВНО: период мигания.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">◓</span><span class="te-title">20 · КЛАВИШИ</span><span class="te-id">ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Две или три кнопки в ряд.</span>
-        <span class="step">КО горит → всегда первая слева.</span>
-        <span class="step">Иначе индекс = (число гласных + (L mod 2)) mod S, где S = число кнопок.</span>
-        <span class="step">ЗВ горит → отзеркалить индекс (i → S−1−i).</span>
-        <span class="var">ВАРИАТИВНО: 2 или 3 кнопки.</span></div></div>
-      </div>
-    </section>
-
-    <section class="sec" id="ch6">
-      <div class="sec-head"><span class="sec-num">VI</span><h2>МОДУЛИ 21–30</h2><span class="tag">ЛОГИКА</span></div>
-      <div class="sec-body">
-
-        <div class="te"><div class="te-head"><span class="te-glyph">★</span><span class="te-title">21 · ДВЕ ПАРЫ</span><span class="te-id">2 РАУНДА</span></div>
-        <div class="te-body"><span class="rec">Экран с парой X, Y и три кнопки знаков.</span>
-        <span class="step">Истинное соотношение пары. РУ горит → поменять «&gt;» и «&lt;».</span>
-        <span class="step">Циклический сдвиг знаков («&gt;»→«=»→«&lt;»→«&gt;»): ЗВ горит (+1 сдвиг); во втором раунде ЧАСЫ-минута чётная (+1 сдвиг).</span>
-        <span class="var">ВАРИАТИВНО: пары новые в каждом раунде.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">☆</span><span class="te-title">22 · ПЕРЕДАЧА</span><span class="te-id">ЧАСЫ + ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Лампа передачи и четыре буквы.</span>
-        <span class="step">Преобразования кода буквы по порядку: ЧАСЫ-минута нечётная → точки и тире меняются местами; КО горит → порядок знаков обратный; P = 3 → точки и тире меняются ещё раз.</span>
-        <span class="step">Расшифровать итог по Приложению Б.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">■</span><span class="te-title">23 · ПОВТОР СО СДВИГОМ</span><span class="te-id">СЧЁТ + ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Плашка показывает вспышки, ниже цветные кнопки.</span>
-        <span class="step">Круг: красный → жёлтый → зелёный → синий.</span>
-        <span class="step">Сдвиг = (ошибки + вариант − 1 + L) mod 4. СЧЁТ: решённых ≥3 → сдвиг + 1 (mod 4).</span>
-        <span class="var">ВАРИАТИВНО: 4 или 5 вспышек.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">□</span><span class="te-title">24 · ДВА КРУГА СИМВОЛОВ</span><span class="te-id">2 РАУНДА · ТАБЛО</span></div>
-        <div class="te-body"><span class="rec">Экран «РАУНД n» и кнопки с символами.</span>
-        <span class="step">Строка порядка: гласных 0–1 → I, 2 → II, 3 → III (Приложение В). ТАБЛО &lt; 5 минут → строка +1 по кругу.</span>
-        <span class="step">Раунд 2: строка ещё +1 по кругу от строки раунда 1. РУ горит → читать строку справа налево (в обоих раундах).</span>
-        <span class="step">Нажимать показанные символы в порядке строки; во втором раунде кнопки снова активны.</span>
-        <span class="var">ВАРИАТИВНО: 4 или 5 символов.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">▲</span><span class="te-title">25 · КУБИКИ</span><span class="te-id">ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Кубики и четыре числа.</span>
-        <span class="step">Горят все три индикатора → 0.</span>
-        <span class="step">Все кубики равны: P = 2 → сумма; иначе произведение.</span>
-        <span class="step">Три кубика: вариант чётный → сумма; нечётный → разность максимума и минимума.</span>
-        <span class="step">Два кубика: вариант чётный → сумма; нечётный → разность.</span>
-        <span class="var">ВАРИАТИВНО: 2 или 3 кубика.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">△</span><span class="te-title">26 · ДУЭЛЬ</span><span class="te-id">ЧАСЫ + ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Три кнопки; устройство отвечает после хода.</span>
-        <span class="step">База: вариант нечётный → студент должен ПРОИГРАТЬ; чётный → ВЫИГРАТЬ.</span>
-        <span class="step">Инверсии цели: КО горит (+1), ЧАСЫ-минута чётная (+1), L = А (+1). Нечётная сумма → цель противоположна базе.</span>
-        <span class="imp">Ничья — всегда ошибка.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">▼</span><span class="te-title">27 · ДОПРОС</span><span class="te-id">ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Лампы и кнопки ДА / НЕТ. Вопрос: «вариант чётный?».</span>
-        <span class="step">Горят все лампы → отвечать наоборот.</span>
-        <span class="step">Горит только средняя (3 лампы) или только правая (2 лампы) → всегда ДА.</span>
-        <span class="step">Горит только левая при 2 лампах и P = 3 → всегда НЕТ.</span>
-        <span class="step">Во всех прочих сочетаниях → правда.</span>
-        <span class="var">ВАРИАТИВНО: 2 или 3 лампы.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">▽</span><span class="te-title">28 · ЦИФРЫ СЕРИИ</span><span class="te-id">СЧЁТ + ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Кнопки с уникальными цифрами серии.</span>
-        <span class="step">База: последняя буква серии гласная → по убыванию; согласная → по возрастанию.</span>
-        <span class="step">Инверсии: ЗВ горит (+1), решённых нечётное число (+1), L ∈ {Г, Д} (+1). Нечётная сумма → направление наоборот.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">◈</span><span class="te-title">29 · ГИРЛЯНДА</span><span class="te-id">ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Ряд ламп и проверка.</span>
-        <span class="step">Лампы 1–3: соответствующая цифра серии чётная. Лампа 4: КО горит. Лампа 5: вариант чётный.</span>
-        <span class="step">Лампа 6 (есть только при нечётных батареях): батареи чётное число XOR L = Б.</span>
-        <span class="var">ВАРИАТИВНО: 5 или 6 ламп.</span></div></div>
-
-        <div class="te"><div class="te-head"><span class="te-glyph">◇</span><span class="te-title">30 · ДВА ПРИМЕРА</span><span class="te-id">2 РАУНДА · ТАБЛО · ПЛАТА</span></div>
-        <div class="te-body"><span class="rec">Экран примера со знаком ▲ ■ или ●, клавиатура и «ОК».</span>
-        <span class="step">РУ горит (любой раунд) → целочисленное деление A на B, знак игнорировать.</span>
-        <span class="step">Раунд 1: ТАБЛО &lt; 3 минут → остаток от деления A на B.</span>
-        <span class="step">Раунд 2: КО горит → остаток от деления; иначе L = Д → целочисленное деление.</span>
-        <span class="step">Иначе по знаку: ▲ сложение, ■ вычитание из большего, ● умножение.</span>
-        <span class="var">ВАРИАТИВНО: примеры новые в каждом раунде.</span></div></div>
-      </div>
-    </section>
-
-    <section class="sec" id="appA">
-      <div class="sec-head"><span class="sec-num">А</span><h2>ПРИЛОЖЕНИЕ А · ЦВЕТА ВАРИАНТА</h2><span class="tag">ДЛЯ 10, 18</span></div>
-      <div class="sec-body">
-        <table>
-          <tr><th>ВАРИАНТ</th><th>ЦВЕТ / ИНДЕКС КРУГА</th></tr>
-          <tr><td>1</td><td><span class="dot" style="background:#ffd23f"></span>жёлтый (0)</td></tr>
-          <tr><td>2</td><td><span class="dot" style="background:#ff4438"></span>красный (1)</td></tr>
-          <tr><td>3</td><td><span class="dot" style="background:#43c96e"></span>зелёный (2)</td></tr>
-          <tr><td>4</td><td><span class="dot" style="background:#4a9dff"></span>синий (3)</td></tr>
-        </table>
-        Круг для сдвигов всегда один: жёлтый → красный → зелёный → синий → жёлтый.
-      </div>
-    </section>
-
-    <section class="sec" id="appB">
-      <div class="sec-head"><span class="sec-num">Б</span><h2>ПРИЛОЖЕНИЕ Б · МОРЗЕ</h2><span class="tag">ДЛЯ 22</span></div>
-      <div class="sec-body">
-        Короткая вспышка — точка, длинная — тире.
-        <table>
-          <tr><th>БУКВА</th><th>КОД</th><th>БУКВА</th><th>КОД</th><th>БУКВА</th><th>КОД</th></tr>
-          <tr><td>А</td><td>· −</td><td>Ж</td><td>· · · −</td><td>О</td><td>− − −</td></tr>
-          <tr><td>Б</td><td>− · · ·</td><td>З</td><td>− − · ·</td><td>П</td><td>· − − ·</td></tr>
-          <tr><td>В</td><td>· − −</td><td>И</td><td>· ·</td><td>Р</td><td>· − ·</td></tr>
-          <tr><td>Г</td><td>− − ·</td><td>К</td><td>− · −</td><td>С</td><td>· · ·</td></tr>
-          <tr><td>Д</td><td>− · ·</td><td>Л</td><td>· − · ·</td><td>Т</td><td>−</td></tr>
-          <tr><td></td><td></td><td>М</td><td>− −</td><td>У</td><td>· · −</td></tr>
-          <tr><td></td><td></td><td>Н</td><td>− ·</td><td></td><td></td></tr>
-        </table>
-      </div>
-    </section>
-
-    <section class="sec" id="appC">
-      <div class="sec-head"><span class="sec-num">В</span><h2>ПРИЛОЖЕНИЕ В · СТРОКИ СИМВОЛОВ</h2><span class="tag">ДЛЯ 24</span></div>
-      <div class="sec-body">
-        <table>
-          <tr><th>СТРОКА</th><th>ПОРЯДОК</th></tr>
-          <tr><td>I</td><td>Ω → Ψ →  → λ → Σ → § → Ж → Ф</td></tr>
-          <tr><td>II</td><td>Ψ → Σ → Ж → Ω → Ф → λ → ∆ → §</td></tr>
-          <tr><td>III</td><td>∆ → λ → Ω → § → Ж → Ψ → Ф → Σ</td></tr>
-        </table>
-      </div>
-    </section>
-
-    <section class="sec" id="appD">
-      <div class="sec-head"><span class="sec-num">Г</span><h2>ПРИЛОЖЕНИЕ Г · ПАНИКА</h2><span class="tag">ПАМЯТКА</span></div>
-      <div class="sec-body">
-        Она придёт. Это не вопрос «если», это вопрос «когда». Встречайте её во всеоружии:
-        <br>▸ Медленнее — значит быстрее. Проверено деканатом трижды.
-        <br>▸ Сомневаетесь в модуле — запросите глиф, фактуру и плату ещё раз; опознание дешевле ошибки.
-        <br>▸ Экран запросов — ваш друг: он не меняется, пока вы не ошиблись. Дышите.
-        <br>▸ Коварнее всех: 09, 13, 17, 23, 26. Перечитайте их до партии.
-        <br>▸ Студент молчит дольше пяти секунд — напомните протокол (§00, шаги 3–4).
-        <br>▘ И помните: устройство не умнее вас. Оно просто терпеливее. Пока.
-      </div>
-    </section>
-
-  </article>
+<main class="stage" id="stage">
+  <div class="board">
+    <div class="hazard-tape"></div>
+    <div class="screws"></div>
+    <div class="board-engrave">УСТРОЙСТВО МК-45-Б</div>
+    <div class="board-serial" id="boardSerial">СЕРИЯ: —</div>
+    <div class="board-tag">УЧЕБНЫЙ БОЕВОЙ ТЕСТ · ФОРМА 45-Б · НЕ ВСКРЫВАТЬ</div>
+    <div class="bays" id="bays">
+      <section class="bay ctrl" id="ctrlBay">
+        <div class="bay-label">ПУЛЬТ <span class="glyph">☼</span> <span class="led" style="visibility:hidden"></span></div>
+        <div class="bay-body">
+          <div class="display7" id="display7">12:00<small>ДО КОНЦА ПАРЫ</small></div>
+          <div class="ctrl-row"><span class="cap">ОШИБКИ</span>
+            <span class="sled" id="s1"></span><span class="sled" id="s2"></span><span class="sled" id="s3"></span>
+            <span id="penBox"></span></div>
+          <div class="ctrl-row"><span class="cap">СЕРИЯ</span><span class="plate-metal" id="pSerial">—</span>
+            <span class="cap">ВАР.</span><span class="plate-metal" id="pVariant">—</span></div>
+          <div class="ctrl-row"><span class="cap">БАТ.</span><span id="pBat"></span>
+            <span class="cap">ИНД.</span><span id="pInds" style="display:flex;gap:6px;align-items:center"></span></div>
+          <button id="submitBtn">СДАТЬ РАБОТУ</button>
+        </div>
+      </section>
+    </div>
+    <div class="board-footer">
+      <span>СБОРНОЕ ПРОИЗВОДСТВО ДЕКАНАТА</span>
+      <span class="warn">⚠ ВЫСОКОЕ НАПРЯЖЕНИЕ ⚠</span>
+      <span>ИЗД. 2026</span>
+    </div>
+    <div class="board-stand"></div>
+  </div>
 </main>
 
-<footer>
-  <span>ФОРМА 45-Б · ОТПЕЧАТАНО В ДЕКАНАТЕ · 30 МОДУЛЕЙ</span>
-  <span>КОПИРОВАНИЕ ЗАПРЕЩЕНО · ПАНИКА ЗАПРЕЩЕНА</span>
-</footer>
+<div class="overlay" id="intro"><div class="count" id="introNum">3</div></div>
+<div class="overlay" id="winOv"><div class="ov-card">
+  <div class="ov-frame st-green"><div class="ov-sub">ПРИКАЗ ПО ФАКУЛЬТЕТУ</div>
+  <div class="ov-big">ЗАЧЁТ</div><div class="ov-sub">СТУДЕНТ ДОПУЩЕН К СЛЕДУЮЩЕЙ ПАРЕ</div></div>
+  <div class="ov-stats" id="winStats"></div>
+  <div class="ov-btns"><button onclick="location.reload()">НОВЫЙ ВАРИАНТ</button>
+  <a class="ghost" href="index.html">НА ГЛАВНЫЙ ЭКРАН</a></div></div></div>
+<div class="overlay" id="failOv"><div class="ov-card">
+  <div class="ov-frame st-red"><div class="ov-sub">ПРИКАЗ ПО ФАКУЛЬТЕТУ</div>
+  <div class="ov-big" id="failTitle">ОТЧИСЛЕН</div><div class="ov-sub" id="failReason"></div></div>
+  <div class="ov-stats">Решено модулей: <b id="failProg">0 из 5</b></div>
+  <div class="ov-btns"><button onclick="location.reload()">ПЕРЕЗАЧЁТ</button>
+  <a class="ghost" href="index.html">НА ГЛАВНЫЙ ЭКРАН</a></div></div></div>
+<div id="toast"></div>
 
 <script>
 (function(){
-  var clock=document.getElementById('clock');
-  function tick(){clock.textContent=new Date().toLocaleTimeString('ru-RU');}
-  tick();setInterval(tick,1000);
-  var secs=[].slice.call(document.querySelectorAll('.sec'));
-  var links=[].slice.call(document.querySelectorAll('.toc a'));
-  function spy(){
-    var cur=secs[0].id;
-    secs.forEach(function(s){if(s.getBoundingClientRect().top<160)cur=s.id;});
-    links.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+cur);});
-  }
-  addEventListener('scroll',spy,{passive:true});spy();
+"use strict";
+var $=function(s){return document.querySelector(s);};
+var rnd=function(n){return Math.floor(Math.random()*n);};
+var pick=function(a){return a[rnd(a.length)];};
+var shuffle=function(a){for(var i=a.length-1;i>0;i--){var j=rnd(i+1);var t=a[i];a[i]=a[j];a[j]=t;}return a;};
+var reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function devMin(){return Math.floor(Math.max(0,G.time)/60);}
+function realMin(){return new Date().getMinutes();}
+
+var actx=null,unlocked=false;
+addEventListener('pointerdown',function(){try{
+  actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+  if(actx.state==='suspended')actx.resume();unlocked=true;
+}catch(e){}});
+function tone(f,d,t,v,dl,sl){d=d||.06;t=t||'square';v=v||.05;dl=dl||0;
+  if(!unlocked||!actx)return;
+  try{var t0=actx.currentTime+dl,o=actx.createOscillator(),g=actx.createGain();
+  o.type=t;o.frequency.setValueAtTime(f,t0);
+  if(sl)o.frequency.exponentialRampToValueAtTime(sl,t0+d);
+  g.gain.setValueAtTime(v,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+d);
+  o.connect(g);g.connect(actx.destination);o.start(t0);o.stop(t0+d+.02);}catch(e){}}
+var snd={click:function(){tone(920,.045);},good:function(){tone(660,.09,'sine',.07);tone(990,.14,'sine',.07,.09);},
+  bad:function(){tone(190,.32,'sawtooth',.09,0,70);},tick:function(){tone(1100,.03);},
+  win:function(){[523,659,784,1047].forEach(function(f,i){tone(f,.16,'triangle',.08,i*.13);});},
+  fail:function(){tone(220,.9,'sawtooth',.09,0,55);}};
+
+var LETTERS='АВЕКМНОРСТУ',VOWELS='АЕИОУЫ';
+function isVow(c){return VOWELS.indexOf(c)>=0;}
+var G={running:false,over:false,time:720,strikes:0,solved:0,serial:'',letters:[],digits:[],variant:1,batteries:0,bell:false,pen:false,coffee:false};
+(function(){
+  function L(){return pick(LETTERS.split(''));}function D(){return rnd(10);}
+  G.letters=[L(),L(),L()];G.digits=[D(),D(),D()];
+  G.serial=G.letters[0]+G.letters[1]+'-'+G.digits.join('')+'-'+G.letters[2];
+  G.variant=1+rnd(4);G.batteries=rnd(4);
+  G.bell=Math.random()<.5;G.pen=Math.random()<.5;G.coffee=Math.random()<.5;
+  if(!G.bell&&!G.pen&&!G.coffee)G.bell=true;
+})();
+var dSum=G.digits[0]+G.digits[1]+G.digits[2];
+var lastDigit=G.digits[2];
+var vowelCount=G.letters.filter(isVow).length;
+var evenCnt=G.digits.filter(function(d){return d%2===0;}).length,oddCnt=3-evenCnt;
+
+$('#pSerial').textContent=G.serial;
+$('#pVariant').textContent='№ '+G.variant;
+$('#boardSerial').textContent='СЕРИЯ: '+G.serial+' · ВАР. '+G.variant;
+(function(){
+  var h='';for(var i=0;i<3;i++)h+='<span class="bat'+(i<G.batteries?' full':'')+'"></span>';
+  h+='<span class="bat-count">'+G.batteries+'/3</span>';$('#pBat').innerHTML=h;
+  var box=$('#pInds');
+  [['ЗВ',G.bell],['РУ',G.pen],['КО',G.coffee]].forEach(function(p){
+    var w=document.createElement('span');
+    w.style.cssText='display:flex;gap:3px;align-items:center;font-size:8px;color:#6d7883';
+    w.innerHTML='<span class="indled'+(p[1]?' on':'')+'"></span>'+p[0];box.appendChild(w);});
+})();
+
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
+function ix(e){e.classList.add('ix');e.addEventListener('pointerdown',function(ev){ev.stopPropagation();});return e;}
+function data(h){return el('div','data',h);}
+function mscreen(t){return el('div','mscreen',t);}
+function verifyBtn(t,f){var b=ix(el('button','vbtn',t));b.addEventListener('click',function(){if(b.disabled)return;snd.click();f(b);});return b;}
+function optsGrid(items,onPick,labels){
+  var box=el('div','opts');
+  if(items.length>4)box.style.gridTemplateColumns='repeat(3,1fr)';
+  items.forEach(function(it,i){
+    var c=(typeof it==='string')?it:((it&&it.html!=null)?it.html:String(it));
+    var b=ix(el('button','opt',(labels?'<small>'+labels[i]+'</small>':'')+c));
+    b.addEventListener('click',function(){if(b.disabled||box.dataset.done)return;snd.click();onPick(i,b,box);});
+    box.appendChild(b);});
+  return box;}
+function wireBox(colors,onClick){
+  var box=el('div','wires');
+  colors.forEach(function(c){var w=ix(el('div','wire w-'+c,'<span class="body"></span>'));
+    w.addEventListener('click',function(){onClick(c,w);});box.appendChild(w);});
+  return box;}
+function keypad(n,onSubmit){
+  var wrap=el('div'),scr=el('div','code-screen'),cells=[];
+  for(var i=0;i<n;i++){cells.push(el('div','code-cell'));scr.appendChild(cells[i]);}
+  var typed='';
+  function redraw(){cells.forEach(function(c,i){c.textContent=(typed[i]!=null?typed[i]:'');});}
+  var pad=el('div','keypad');
+  ['1','2','3','4','5','6','7','8','9','СБР','0','←'].forEach(function(k){
+    var b=ix(el('button','key'+(isNaN(parseInt(k,10))?' op':''),k));
+    if(k==='СБР')b.dataset.op='clr';if(k==='←')b.dataset.op='del';
+    b.addEventListener('click',function(){
+      if(pad.dataset.done)return;
+      if(b.dataset.op==='clr'){typed='';snd.click();redraw();return;}
+      if(b.dataset.op==='del'){typed=typed.slice(0,-1);snd.click();redraw();return;}
+      if(typed.length>=n)return;
+      snd.click();typed+=k;redraw();
+      if(typed.length===n)setTimeout(function(){onSubmit(typed,{
+        clear:function(){typed='';redraw();},lock:function(){pad.dataset.done=1;},
+        shake:function(){pad.classList.add('shake');setTimeout(function(){pad.classList.remove('shake');},350);}});},120);});
+    pad.appendChild(b);});
+  wrap.appendChild(scr);wrap.appendChild(pad);return wrap;}
+function switches(n,verify){
+  var wrap=el('div'),row=el('div','sw-row'),sws=[];
+  for(var i=0;i<n;i++){(function(i){
+    var s=ix(el('div','sw','<i></i><span class="sw-num">'+(i+1)+'</span>'));
+    s.addEventListener('click',function(){if(row.dataset.done)return;snd.click();s.classList.toggle('on');});
+    sws.push(s);row.appendChild(s);})(i);}
+  var btn=verifyBtn('ПРОВЕРИТЬ',function(b){verify(sws.map(function(s){return s.classList.contains('on');}),b);});
+  var h=el('div','sw-holder');h.appendChild(btn);wrap.appendChild(row);wrap.appendChild(h);return wrap;}
+function uniqNums(c,lo,hi){var s={},a=[];while(a.length<c){var n=lo+rnd(hi-lo+1);if(!s[n]){s[n]=1;a.push(n);}}return a;}
+var WIRE_COLORS=['red','yellow','blue','green','white'];
+var VAR_COLOR={1:'yellow',2:'red',3:'green',4:'blue'};
+var LD_COLOR={0:'yellow',1:'red',2:'green',3:'blue',4:'yellow',5:'red',6:'green',7:'blue',8:'yellow',9:'red'};
+var PLATE_COLOR={0:'red',1:'yellow',2:'green',3:'blue',4:'white'};
+var LBL=['А','Б','В','Г','Д','Е'];
+
+var TASKS={
+t01:{g:'◆',sk:'sk01',make:function(b,api,t){
+  var R=[1+rnd(4),1+rnd(4)],round=0;
+  var scr=mscreen('ЗАПРОС 1: '+R[0]);b.appendChild(scr);
+  function idx(){return round===0?(R[0]+G.batteries+t.L)%4:(R[1]+t.P+G.variant)%4;}
+  b.appendChild(optsGrid(LBL.slice(0,4),function(i,btn,box){
+    if(i===idx()){
+      btn.classList.add('right');setTimeout(function(){btn.classList.remove('right');},260);
+      round++;
+      if(round>=2){box.dataset.done=1;api.solve();}
+      else scr.textContent='ЗАПРОС 2: '+R[1];
+    }else api.strike('Неверный ответ');
+  }));
+}},
+t02:{g:'∑',sk:'sk02',make:function(b,api,t){
+  var cnt=pick([4,5]),nums=uniqNums(cnt,13,96);
+  function ds(n){return String(n).split('').reduce(function(a,c){return a+ +c;},0);}
+  var sums=nums.map(ds);
+  function calc(){
+    var wantMax=(G.variant%2===1);
+    if(devMin()<4)wantMax=!wantMax;
+    var tgt=wantMax?Math.max.apply(null,sums):Math.min.apply(null,sums);
+    var f=sums.indexOf(tgt),l=sums.lastIndexOf(tgt);
+    return (f===l)?f:((t.P%2===1)?f:l);}
+  b.appendChild(optsGrid(nums.map(String),function(i,btn,box){
+    if(i===calc()){btn.classList.add('right');box.dataset.done=1;api.solve();}
+    else{btn.classList.add('wrong');btn.disabled=true;api.strike('Не та сумма');}}));
+}},
+t03:{g:'π',sk:'sk03',make:function(b,api,t){
+  var order=[['красный','c-red'],['жёлтый','c-yellow'],['зелёный','c-green'],['синий','c-blue']];
+  function calc(){
+    var base={0:1,1:0,2:2,3:3}[G.batteries];
+    base=(base+G.solved)%4;
+    if(t.L===0||t.L===2||t.L===4)base=(base+1)%4;
+    if(G.coffee)base=3-base;
+    return base;}
+  b.appendChild(optsGrid(order.map(function(o){return '<span class="'+o[1]+'">●</span> '+o[0];}),function(i,btn,box){
+    if(i===calc()){btn.classList.add('right');box.dataset.done=1;api.solve();}
+    else{btn.classList.add('wrong');btn.disabled=true;api.strike('Не тот цвет');}}));
+}},
+t04:{g:'≡',sk:'sk04',make:function(b,api,t){
+  var cnt=pick([6,8]);
+  var inv=(G.bell?1:0)+(G.solved>=3?1:0)+(t.L%2);
+  var par=(lastDigit%2+inv)%2;
+  var nums;
+  do{nums=[];for(var i=0;i<cnt;i++)nums.push(10+rnd(90));}
+  while(!(nums.filter(function(n){return n%2===par;}).length>=2&&nums.filter(function(n){return n%2===par;}).length<=cnt-2));
+  var sel={},box=el('div','opts');box.style.gridTemplateColumns='repeat(4,1fr)';
+  nums.forEach(function(n,i){var c=ix(el('button','opt',String(n)));
+    c.addEventListener('click',function(){if(box.dataset.done)return;snd.click();
+      if(sel[i]){delete sel[i];c.classList.remove('sel');}else{sel[i]=1;c.classList.add('sel');}});
+    box.appendChild(c);});
+  b.appendChild(box);
+  var v=verifyBtn('ПРОВЕРИТЬ',function(btn){
+    var ok=nums.every(function(n,i){return (n%2===par)===!!sel[i];});
+    if(ok){btn.classList.add('ok');box.dataset.done=1;api.solve();}
+    else{api.strike('Ряд собран неверно');sel={};box.querySelectorAll('.opt').forEach(function(c){c.classList.remove('sel');});}});
+  v.style.alignSelf='center';b.appendChild(v);
+}},
+t05:{g:'Φ',sk:'sk05',make:function(b,api,t){
+  var cnt=pick([4,6]),V=['А','Е','И','О','У'],C=['В','К','М','Н','Р','С','Т'];
+  var inv=(G.pen?1:0)+(devMin()%2===0?1:0)+(t.P===3?1:0);
+  var needVowel=((vowelCount<=1?0:1)+inv)%2;
+  var four=[];
+  if(needVowel){four.push(pick(V));for(var i=1;i<cnt;i++)four.push(pick(C));}
+  else{four.push(pick(C));for(var j=1;j<cnt;j++)four.push(pick(V));}
+  b.appendChild(optsGrid(shuffle(four),function(i,btn,box){
+    var ch=btn.textContent;
+    if(needVowel?isVow(ch):!isVow(ch)){btn.classList.add('right');box.dataset.done=1;api.solve();}
+    else{btn.classList.add('wrong');btn.disabled=true;api.strike('Не та буква');}}));
+}},
+t06:{g:'÷',sk:'sk06',make:function(b,api,t){
+  var half=pick([2,3]),Q=1+rnd(3);
+  function mk(){var x,y;do{x=1+rnd(8);y=1+rnd(8);}while(x===y);return[x,y];}
+  var im=[],pr=[];
+  for(var i=0;i<half;i++)im.push(mk());
+  for(var j=0;j<half;j++)pr.push(mk());
+  im.forEach(function(f){if(f[0]<f[1]){var q=f[0];f[0]=f[1];f[1]=q;}});
+  pr.forEach(function(f){if(f[0]>f[1]){var q=f[0];f[0]=f[1];f[1]=q;}});
+  var pool=shuffle(im.concat(pr));
+  function val(f){return f[0]/f[1];}
+  b.appendChild(mscreen('РЕЖИМ ФИЛЬТРА: '+Q));
+  function calc(){
+    var group;
+    if(Q===1)group=G.coffee?pool.filter(function(f){return val(f)>1;}):pool.filter(function(f){return val(f)<1;});
+    else if(Q===2)group=G.bell?pool.filter(function(f){return val(f)>1;}):pool.filter(function(f){return val(f)<1;});
+    else group=pool.slice();
+    var wantMin=(G.variant%2===0);
+    if(realMin()%2===0)wantMin=!wantMin;
+    var tgt=group[0];
+    group.forEach(function(x){if(wantMin?val(x)<val(tgt):val(x)>val(tgt))tgt=x;});
+    return pool.indexOf(tgt);}
+  b.appendChild(optsGrid(pool.map(function(f){return f[0]+'/'+f[1];}),function(i,btn,box){
+    if(i===calc()){btn.classList.add('right');box.dataset.done=1;api.solve();}
+    else{btn.classList.add('wrong');btn.disabled=true;api.strike('Не та дробь');}}));
+}},
+t07:{g:'∩',sk:'sk07',make:function(b,api,t){
+  var cnt=pick([4,5]);
+  var pool=shuffle([['III',3],['IV',4],['VIII',8],['IX',9],['XVI',16],['XXIII',23],['XIV',14],['XXVII',27],['XLII',42],['LI',51],['LXIV',64],['LXXVII',77]]).slice(0,cnt);
+  var vals=pool.map(function(p){return p[1];});
+  function calc(){
+    if(G.solved%3===2||(t.P===2&&G.coffee)){
+      var s=vals.slice().sort(function(a,b){return a-b;});
+      return vals.indexOf(s[Math.floor((cnt-1)/2)]);}
+    var base=(G.digits[0]%2===0)?0:1;
+    if(G.coffee)base=1-base;
+    return base===0?vals.indexOf(Math.min.apply(null,vals)):vals.indexOf(Math.max.apply(null,vals));}
+  b.appendChild(optsGrid(pool.map(function(p){return p[0];}),function(i,btn,box){
+    if(i===calc()){btn.classList.add('right');box.dataset.done=1;api.solve();}
+    else{btn.classList.add('wrong');btn.disabled=true;api.strike('Не то число');}}));
+}},
+t08:{g:'#',sk:'sk08',make:function(b,api,t){
+  var wires=['red','yellow','blue','green'];
+  var w=rnd(3);for(var i=0;i<w;i++)wires.push('white');
+  var swaps=(G.pen?1:0)+((t.L===1||t.L===3)?1:0);
+  var warm=(lastDigit%2===0);
+  if(swaps%2===1)warm=!warm;
+  var need=warm?{red:1,yellow:1}:{blue:1,green:1};
+  var cut={};
+  b.appendChild(wireBox(shuffle(wires),function(c,wr){
+    if(b.dataset.done)return;
+    if(!need[c]){api.strike('Не тот провод');wr.classList.add('shake');setTimeout(function(){wr.classList.remove('shake');},350);return;}
+    if(cut[c])return;cut[c]=1;wr.classList.add('cut');
+    if(Object.keys(cut).length===2){b.dataset.done=1;api.solve();}}));
+}},
+t09:{g:'§',sk:'sk09',make:function(b,api,t){
+  var FULL={1:['white','red','blue','yellow','green'],2:['red','yellow','green','blue','white'],
+    3:['green','blue','white','red','yellow'],4:['yellow','green','red','white','blue']}[G.variant];
+  var ord=FULL.slice(0,pick([4,5]));
+  var rev=(G.bell?1:0)+(t.P===3?1:0);
+  if(rev%2===1)ord=ord.slice().reverse();
+  var pos=0;
+  b.appendChild(wireBox(shuffle(ord.slice()),function(c,wr){
+    if(b.dataset.done)return;
+    if(c===ord[pos]){wr.classList.add('cut');pos++;if(pos===ord.length){b.dataset.done=1;api.solve();}}
+    else{api.strike('Нарушен порядок');b.querySelectorAll('.wire.cut').forEach(function(x){x.classList.remove('cut');});pos=0;}}));
+}},
+t10:{g:'‡',sk:'sk10',make:function(b,api,t){
+  var wires=['red','yellow','blue','green'];
+  var w=1+rnd(2);for(var i=0;i<w;i++)wires.push('white');
+  var keep=G.coffee?LD_COLOR[lastDigit]:(t.L===4?'white':VAR_COLOR[G.variant]);
+  var cut={},needN=wires.length-1;
+  b.appendChild(wireBox(shuffle(wires),function(c,wr){
+    if(b.dataset.done)return;
+    if(c===keep){api.strike('Задет несущий провод');wr.classList.add('shake');setTimeout(function(){wr.classList.remove('shake');},350);return;}
+    if(cut[c])return;cut[c]=1;wr.classList.add('cut');
+    if(Object.keys(cut).length===needN){b.dataset.done=1;api.solve();}}));
+}},
+t11:{g:'µ',sk:'sk11',make:function(b,api,t){
+  var len=4;
+  var c1=[],c2=[];for(var i=0;i<len;i++){c1.push(rnd(10));c2.push(rnd(10));}
+  var s1=1+rnd(3),s2=1+rnd(3),round=0;
+  function code(c,s,rev){
+    var d=c.map(function(x){return (x+s)%10;});
+    if(rev)d=d.reverse();
+    if(G.pen)d=d.map(function(x){return 9-x;});
+    return d.join('');}
+  var scr=mscreen('ШИФР 1: '+c1.join('')+' · СДВИГ '+s1);
+  b.appendChild(scr);
+  b.appendChild(keypad(len,function(typed,ctl){
+    var want=round===0?code(c1,s1,false):code(c2,s2,true);
+    if(typed===want){
+      round++;
+      if(round>=2){ctl.lock();api.solve();}
+      else{scr.textContent='ШИФР 2: '+c2.join('')+' · СДВИГ '+s2;ctl.clear();}
+    }else{api.strike('Код не принят');ctl.shake();setTimeout(ctl.clear,380);}
+  }));
+}},
+t12:{g:'°',sk:'sk12',make:function(b,api,t){
+  var raw=''+((G.batteries+vowelCount)%10)+lastDigit+((G.variant*lastDigit)%10);
+  var rev=(G.bell?1:0)+(G.solved>=2?1:0)+(t.P===1?1:0);
+  var code=(rev%2===1)?raw.split('').reverse().join(''):raw;
+  b.appendChild(keypad(3,function(typed,ctl){
+    if(typed===code){ctl.lock();api.solve();}
+    else{api.strike('Код не принят');ctl.shake();setTimeout(ctl.clear,380);}}));
+}},
+t13:{g:'±',sk:'sk13',make:function(b,api,t){
+  var len=pick([4,5]),src=[];for(var i=0;i<len;i++)src.push(rnd(10));
+  var code;
+  if(G.pen&&G.coffee)code=src.map(function(d){return (d+2)%10;}).join('');
+  else if(G.pen)code=src.map(function(d){return (d+1)%10;}).join('');
+  else{
+    code=src.slice().reverse().join('');
+    if(t.P===3)code=code.split('').map(function(d){return (parseInt(d,10)+1)%10;}).join('');}
+  b.appendChild(data('ШИФРОГРАММА: '+src.join(' ')));
+  b.appendChild(keypad(len,function(typed,ctl){
+    if(typed===code){ctl.lock();api.solve();}
+    else{api.strike('Код не принят');ctl.shake();setTimeout(ctl.clear,380);}}));
+}},
+t14:{g:'√',sk:'sk14',make:function(b,api,t){
+  var k=pick([5,6]),N=(dSum*G.variant)%Math.pow(2,k);
+  var bits=[];for(var i=0;i<k;i++)bits.push((N>>(k-1-i))&1);
+  if(G.coffee)bits=bits.map(function(x){return x?0:1;});
+  b.appendChild(switches(k,function(state,btn){
+    var map=bits.slice();
+    var lsb=(realMin()%2===0)!==(t.L===0||t.L===2);
+    if(lsb)map=map.reverse();
+    var ok=state.every(function(v,i){return v===!!map[i];});
+    if(ok){btn.classList.add('ok');api.solve();}else api.strike('Код тумблеров неверен');}));
+}},
+t15:{g:'∞',sk:'sk15',make:function(b,api,t){
+  var bits=G.digits.map(function(d){return d%2===1;});
+  var inv=(G.pen?1:0)+(G.solved%2===0?1:0)+(t.P===2?1:0);
+  if(inv%2===1)bits=bits.map(function(x){return !x;});
+  b.appendChild(switches(3,function(state,btn){
+    var ok=state.every(function(v,i){return v===bits[i];});
+    if(ok){btn.classList.add('ok');api.solve();}else api.strike('Тумблеры не совпали');}));
+}},
+t16:{g:'≈',sk:'sk16',make:function(b,api,t){
+  var P=pick([6,8]),pos=rnd(P),round=0;
+  var o1=rnd(P),o2=rnd(P);
+  function target(){
+    var o=round===0?o1:o2;
+    var x=round===0?(o+G.batteries)%P:((o2-G.variant)%P+P)%P;
+    if(G.bell)x=(P-1-x)%P;
+    return x;}
+  var scr=mscreen('СМЕЩЕНИЕ 1: '+o1);b.appendChild(scr);
+  var wrap=el('div','knob-wrap'),dial=el('div','knob');
+  var ptr=el('div','knob-ptr');dial.appendChild(ptr);dial.appendChild(el('div','knob-dot'));
+  for(var i=0;i<P;i++){var tk=el('div','tick',String(i));var a=i*(360/P)*Math.PI/180;
+    tk.style.transform='translate('+(Math.sin(a)*64-4)+'px,'+(-Math.cos(a)*64-7)+'px)';dial.appendChild(tk);}
+  function rot(){ptr.style.setProperty('--rot',(pos*(360/P))+'deg');}rot();
+  var ccw=ix(el('button','vbtn','⟲'));ccw.addEventListener('click',function(){snd.click();pos=(pos+P-1)%P;rot();});
+  var cw=ix(el('button','vbtn','⟳'));cw.addEventListener('click',function(){snd.click();pos=(pos+1)%P;rot();});
+  wrap.appendChild(ccw);wrap.appendChild(dial);wrap.appendChild(cw);b.appendChild(wrap);
+  var v=verifyBtn('ГОТОВО',function(btn){
+    if(pos===target()){
+      round++;
+      if(round>=2){btn.classList.add('ok');api.solve();}
+      else scr.textContent='СМЕЩЕНИЕ 2: '+o2;
+    }else api.strike('Позиция неверна');});
+  v.style.alignSelf='center';b.appendChild(v);
+}},
+t17:{g:'◐',sk:'sk17',make:function(b,api,t){
+  var S=pick([4,5]);
+  function calc(){return ((G.variant-1)+(G.bell?1:0)+(G.coffee?1:0)+(G.pen?1:0)+(t.P-1))%S;}
+  var row=el('div','lever-row');
+  for(var i=0;i<S;i++){(function(i){
+    var s=ix(el('div','slot','<span>'+(i+1)+'</span>'));
+    s.addEventListener('click',function(){
+      if(row.dataset.done)return;snd.click();
+      row.querySelectorAll('.slot').forEach(function(x){x.classList.remove('here');});
+      s.classList.add('here');
+      if(i===calc()){row.dataset.done=1;api.solve();}else api.strike('Не та позиция');});
+    row.appendChild(s);})(i);}
+  b.appendChild(row);
+}},
+t18:{g:'◑',sk:'sk18',make:function(b,api,t){
+  var btn=ix(el('button','hold-btn','ОТВЕ­ТИТЬ')),lamp=el('div','lamp');
+  var CLS=['lit-y','lit-r','lit-g','lit-b'];
+  function calc(){
+    var i=G.coffee?dSum%4:({1:0,2:1,3:2,4:3})[G.variant];
+    if(G.solved%2===1)i+=2;
+    if(t.L===1||t.L===3)i+=1;
+    return CLS[i%4];}
+  var iv=null,cur=null,start=0,spd=400+rnd(4)*100;
+  function light(c){CLS.forEach(function(x){lamp.classList.remove(x);});if(c)lamp.classList.add(c);cur=c;}
+  btn.addEventListener('pointerdown',function(e){e.preventDefault();
+    if(b.dataset.done)return;
+    btn.classList.add('holding');start=Date.now();snd.click();
+    iv=setInterval(function(){light(CLS[rnd(4)]);},spd);light(CLS[rnd(4)]);});
+  function up(){
+    if(!iv)return;clearInterval(iv);iv=null;btn.classList.remove('holding');
+    if(b.dataset.done){light(null);return;}
+    if(Date.now()-start<350){api.strike('Кнопку нужно УДЕРЖИВАТЬ');light(null);return;}
+    if(cur===calc()){b.dataset.done=1;light(cur);api.solve();}
+    else{api.strike('Не тот цвет');light(null);}}
+  addEventListener('pointerup',up);addEventListener('pointercancel',up);
+  var row=el('div','hold-row');row.appendChild(btn);
+  var lb=el('div','lamp-block');lb.appendChild(lamp);lb.appendChild(el('span',null,'ЛАМПА'));
+  row.appendChild(lb);b.appendChild(row);
+}},
+t19:{g:'◒',sk:'sk19',make:function(b,api,t){
+  var btn=ix(el('button','hold-btn blue','ДЕР­ЖАТЬ')),lamp=el('div','lamp');
+  function calcN(){
+    var N=G.variant+(G.coffee?2:0)+(G.bell?1:0)+(t.P-1);
+    if(realMin()%2===0)N+=1;
+    return N;}
+  var iv=null,count=0,on=false,start=0,period=280+rnd(4)*60;
+  function setL(v){lamp.classList.toggle('lit-y',v);}
+  btn.addEventListener('pointerdown',function(e){e.preventDefault();
+    if(b.dataset.done)return;
+    btn.classList.add('holding');start=Date.now();count=0;on=false;snd.click();
+    iv=setInterval(function(){on=!on;setL(on);if(on)count++;},period);});
+  function up(){
+    if(!iv)return;clearInterval(iv);iv=null;setL(false);btn.classList.remove('holding');
+    if(b.dataset.done)return;
+    if(Date.now()-start<350){api.strike('Кнопку нужно УДЕРЖИВАТЬ');return;}
+    var check=G.pen?(count-1):count;
+    if(check===calcN()){b.dataset.done=1;api.solve();}
+    else api.strike('Счёт: '+check+', нужно '+calcN());}
+  addEventListener('pointerup',up);addEventListener('pointercancel',up);
+  var row=el('div','hold-row');row.appendChild(btn);
+  var lb=el('div','lamp-block');lb.appendChild(lamp);lb.appendChild(el('span',null,'СЧЁТ'));
+  row.appendChild(lb);b.appendChild(row);
+}},
+t20:{g:'◓',sk:'sk20',make:function(b,api,t){
+  var three=Math.random()<.5;
+  var names=three?['ЛЕВАЯ','СРЕДНЯЯ','ПРАВАЯ']:['ЛЕВАЯ','ПРАВАЯ'];
+  function calc(){
+    var n=names.length;
+    if(G.coffee)return 0;
+    var idx=(vowelCount+(t.L%2))%n;
+    if(G.bell)idx=(n-1)-idx;
+    return idx;}
+  var row=el('div','hold-row');
+  names.forEach(function(nm,i){
+    var v=ix(el('button','vbtn',nm));v.style.fontSize='13px';v.style.padding='15px 18px';
+    v.addEventListener('click',function(){
+      if(row.dataset.done)return;
+      if(i===calc()){row.dataset.done=1;v.classList.add('ok');api.solve();}
+      else api.strike('Не та кнопка');});
+    row.appendChild(v);});
+  b.appendChild(row);
+}},
+t21:{g:'★',sk:'sk21',make:function(b,api,t){
+  var pairs=[],r;
+  for(r=0;r<2;r++){var X=10+rnd(89),Y=10+rnd(89);if(Math.random()<.18)Y=X;pairs.push([X,Y]);}
+  var round=0;
+  var scr=mscreen('X='+pairs[0][0]+' Y='+pairs[0][1]);b.appendChild(scr);
+  function calc(){
+    var X=pairs[round][0],Y=pairs[round][1];
+    var rel=X>Y?'>':(X<Y?'<':'=');
+    var need=rel;
+    if(G.pen){if(rel==='>')need='<';else if(rel==='<')need='>';}
+    var cyc=(G.bell?1:0)+((round===1&&realMin()%2===1)?1:0);
+    for(var i=0;i<cyc;i++)need=(need==='>')?'=':(need==='='?'<':'>');
+    return need;}
+  var row=el('div','hold-row');
+  ['>','=','<'].forEach(function(s){
+    var v=ix(el('button','vbtn',s));v.style.fontSize='20px';
+    v.addEventListener('click',function(){
+      if(row.dataset.done)return;
+      if(s===calc()){
+        round++;
+        if(round>=2){row.dataset.done=1;v.classList.add('ok');api.solve();}
+        else{scr.textContent='X='+pairs[1][0]+' Y='+pairs[1][1];snd.good();}
+      }else api.strike('Знак неверен');});
+    row.appendChild(v);});
+  b.appendChild(row);
+}},
+t22:{g:'☆',sk:'sk22',make:function(b,api,t){
+  var MORSE={'А':'.-','Б':'-...','В':'.--','Г':'--.','Д':'-..','Ж':'...-','З':'--..','И':'..','К':'-.-','Л':'.-..','М':'--','Н':'-.','О':'---','П':'.--.','Р':'.-.','С':'...','Т':'-','У':'..-'};
+  var keys=Object.keys(MORSE),letter=pick(keys);
+  var others=shuffle(keys.filter(function(l){return l!==letter;})).slice(0,3);
+  var opts=shuffle([letter].concat(others));
+  var lamp=el('div','morse-lamp'),alive=true;
+  var seq=MORSE[letter];
+  if(realMin()%2===1)seq=seq.split('').map(function(c){return c==='.'?'-':'.';}).join('');
+  if(G.coffee)seq=seq.split('').reverse().join('');
+  if(t.P===3)seq=seq.split('').map(function(c){return c==='.'?'-':'.';}).join('');
+  var lb=el('div','lamp-block');lb.appendChild(lamp);lb.appendChild(el('span',null,'ПЕРЕДАЧА'));
+  lb.style.margin='0 auto';b.appendChild(lb);
+  b.appendChild(optsGrid(opts,function(i,btn,box){
+    if(opts[i]===letter){alive=false;btn.classList.add('right');box.dataset.done=1;api.solve();}
+    else{btn.classList.add('wrong');btn.disabled=true;api.strike('Не та буква');}}));
+  var UNIT=170;
+  (function loop(){
+    if(!alive)return;var i=0;
+    (function step(){
+      if(!alive){lamp.classList.remove('on');return;}
+      if(i>=seq.length){lamp.classList.remove('on');setTimeout(loop,1400);return;}
+      var ch=seq[i];lamp.classList.add('on');
+      setTimeout(function(){lamp.classList.remove('on');i++;setTimeout(step,UNIT);},ch==='.'?UNIT:UNIT*3);})();
+  })();
+}},
+t23:{g:'■',sk:'sk23',make:function(b,api,t){
+  var ORDER=['r','y','g','b'],NAMES={r:'КРАСНЫЙ',y:'ЖЁЛТЫЙ',g:'ЗЕЛЁНЫЙ',b:'СИНИЙ'};
+  var len=pick([4,5]),seq=[];for(var i=0;i<len;i++)seq.push(pick(ORDER));
+  var pad=el('div','flashpad');b.appendChild(pad);
+  var shown=false,idx=0;
+  b.appendChild(optsGrid(ORDER.map(function(c){return '<span class="c-'+c+'">●</span> '+NAMES[c];}),function(i,btn,box){
+    if(!shown)return;
+    var shift=(api.strikes()+G.variant-1+t.L)%4;
+    if(G.solved>=3)shift=(shift+1)%4;
+    var need=ORDER[(ORDER.indexOf(seq[idx])+shift)%4];
+    if(ORDER[i]===need){
+      btn.classList.add('right');setTimeout(function(){btn.classList.remove('right');},250);
+      idx++;
+      if(idx>=seq.length){box.dataset.done=1;api.solve();}
+    }else api.strike('Сбой повтора');}));
+  var k=0;
+  (function flash(){
+    if(k>=seq.length){pad.className='flashpad';shown=true;toast('ПОВТОРЯЙТЕ','ok');return;}
+    pad.className='flashpad f-'+seq[k];tone({r:600,y:760,g:900,b:520}[seq[k]],.18,'sine',.06);
+    setTimeout(function(){pad.className='flashpad';k++;setTimeout(flash,230);},520);})();
+}},
+t24:{g:'□',sk:'sk24',make:function(b,api,t){
+  var ROWS=[['Ω','Ψ','','λ','Σ','§','Ж','Ф'],['Ψ','Σ','Ж','Ω','Ф','λ','∆','§'],['∆','λ','Ω','§','Ж','Ψ','Ф','Σ']];
+  var cnt=pick([4,5]),round=0;
+  function rowIdx(){
+    var ri=vowelCount<=1?0:(vowelCount===2?1:2);
+    if(devMin()<5)ri=(ri+1)%3;
+    ri=(ri+round)%3;
+    return ri;}
+  function orderRow(){
+    var r=ROWS[rowIdx()];
+    if(G.pen)r=r.slice().reverse();
+    return r;}
+  var four=shuffle(ROWS[rowIdx()].slice()).slice(0,cnt);
+  var next=0;
+  var scr=mscreen('РАУНД 1');b.appendChild(scr);
+  b.appendChild(optsGrid(four.map(function(s){return '<span style="font-size:24px">'+s+'</span>';}),function(i,btn,box){
+    var row=orderRow();
+    var sorted=four.slice().sort(function(a,c){return row.indexOf(a)-row.indexOf(c);});
+    if(four[i]===sorted[next]&&!btn.disabled){
+      btn.classList.add('right');btn.disabled=true;next++;
+      if(next>=four.length){
+        round++;
+        if(round>=2){box.dataset.done=1;api.solve();}
+        else{next=0;scr.textContent='РАУНД 2';
+          box.querySelectorAll('.opt').forEach(function(o){o.classList.remove('right');o.disabled=false;});}
+      }
+    }else if(!btn.disabled)api.strike('Порядок символов нарушен');}));
+}},
+t25:{g:'▲',sk:'sk25',make:function(b,api,t){
+  var n=pick([2,3]),dice=[];for(var i=0;i<n;i++)dice.push(1+rnd(6));
+  var DICE={1:'⚀',2:'⚁',3:'⚂',4:'⚃',5:'⚄',6:'⚅'};
+  function sum(){return dice.reduce(function(a,b){return a+b;},0);}
+  function prod(){return dice.reduce(function(a,b){return a*b;},1);}
+  function diff(){return Math.max.apply(null,dice)-Math.min.apply(null,dice);}
+  function calc(){
+    if(G.bell&&G.pen&&G.coffee)return 0;
+    var allEq=dice.every(function(d){return d===dice[0];});
+    if(allEq)return (t.P===2)?sum():prod();
+    if(n===3)return G.variant%2===0?sum():diff();
+    return G.variant%2===0?sum():Math.abs(dice[0]-dice[1]);}
+  var set={};set[calc()]=1;
+  while(Object.keys(set).length<4)set[Math.max(1,calc()+rnd(9)-4)]=1;
+  var opts=shuffle(Object.keys(set).map(Number));
+  b.appendChild(data('<span class="dice">'+dice.map(function(d){return DICE[d];}).join(' ')+'</span>'));
+  b.appendChild(optsGrid(opts.map(String),function(i,btn,box){
+    if(opts[i]===calc()){btn.classList.add('right');box.dataset.done=1;api.solve();}
+    else{btn.classList.add('wrong');btn.disabled=true;api.strike('Не то число');}}));
+}},
+t26:{g:'△',sk:'sk26',make:function(b,api,t){
+  var ITEMS=['КАМЕНЬ','НОЖНИЦЫ','БУМАГА'];
+  var info=el('div','data','—');b.appendChild(info);
+  b.appendChild(optsGrid(ITEMS,function(i,btn,box){
+    var dev=rnd(3);
+    var devWin=(((i-dev)+3)%3)===1;
+    info.textContent='УСТРОЙСТВО: '+ITEMS[dev];
+    if(i===dev){api.strike('Ничья не принимается');return;}
+    var studentLoses=(G.variant%2===1);
+    var inv=(G.coffee?1:0)+(realMin()%2===0?1:0)+(t.L===0?1:0);
+    if(inv%2===1)studentLoses=!studentLoses;
+    if(devWin===studentLoses){box.dataset.done=1;btn.classList.add('right');api.solve();}
+    else api.strike(studentLoses?'Нужно было ПРОИГРАТЬ':'Нужно было ВЫИГРАТЬ');}));
+}},
+t27:{g:'▼',sk:'sk27',make:function(b,api,t){
+  var n=pick([2,3]),pattern=rnd(4),lamps=[];
+  if(n===3)lamps=[pattern===0||pattern===3,pattern===1||pattern===3,pattern===2||pattern===3];
+  else lamps=[pattern===1||pattern===3,pattern===2||pattern===3];
+  function calc(){
+    var truth=G.variant%2===0;
+    var allOn=lamps.every(function(x){return x;});
+    if(allOn)return !truth;
+    if(n===3&&lamps[1]&&!lamps[0]&&!lamps[2])return true;
+    if(n===2&&!lamps[0]&&lamps[1])return true;
+    if(n===2&&lamps[0]&&!lamps[1]&&t.P===3)return false;
+    return truth;}
+  var row=el('div','lamps-row');
+  lamps.forEach(function(on){row.appendChild(el('div','mini-lamp'+(on?' on':'')));});
+  b.appendChild(row);
+  b.appendChild(optsGrid(['ДА','НЕТ'],function(i,btn,box){
+    if((i===0)===calc()){btn.classList.add('right');box.dataset.done=1;api.solve();}
+    else api.strike('Ответ неверен');}));
+}},
+t28:{g:'▽',sk:'sk28',make:function(b,api,t){
+  var ds=[];G.digits.forEach(function(d){if(ds.indexOf(d)<0)ds.push(d);});
+  ds.sort(function(x,y){return x-y;});
+  if(ds.length<2){var ex=(lastDigit+1)%10;if(ds.indexOf(ex)<0)ds.push(ex);ds.sort(function(x,y){return x-y;});}
+  function order(){
+    var o=isVow(G.letters[2])?ds.slice().reverse():ds;
+    var inv=(G.bell?1:0)+(G.solved%2===1?1:0)+((t.L===3||t.L===4)?1:0);
+    if(inv%2===1)o=o.slice().reverse();
+    return o;}
+  var pos=0,box=el('div','opts');box.style.gridTemplateColumns='repeat('+ds.length+',1fr)';
+  shuffle(ds.slice()).forEach(function(d){
+    var c=ix(el('button','opt',String(d)));
+    c.addEventListener('click',function(){
+      if(box.dataset.done)return;snd.click();
+      var o=order();
+      if(d===o[pos]){c.classList.add('right');c.disabled=true;pos++;
+        if(pos>=o.length){box.dataset.done=1;api.solve();}}
+      else api.strike('Не та цифра');});
+    box.appendChild(c);});
+  b.appendChild(box);
+}},
+t29:{g:'◈',sk:'sk29',make:function(b,api,t){
+  var n=5+(G.batteries%2);
+  var target=[G.digits[0]%2===0,G.digits[1]%2===0,G.digits[2]%2===0,G.coffee,G.variant%2===0];
+  if(n===6)target.push((G.batteries%2===0)!==(t.L===1));
+  var state=[];for(var i=0;i<n;i++)state.push(false);
+  var row=el('div','lamps-row');
+  state.forEach(function(_,i){
+    var l=ix(el('div','mini-lamp'));
+    l.addEventListener('click',function(){if(row.dataset.done)return;snd.click();state[i]=!state[i];l.classList.toggle('on',state[i]);});
+    row.appendChild(l);});
+  b.appendChild(row);
+  var v=verifyBtn('ПРОВЕРИТЬ',function(btn){
+    var ok=target.every(function(x,i){return state[i]===x;});
+    if(ok){btn.classList.add('ok');row.dataset.done=1;api.solve();}
+    else api.strike('Свет не совпал');});
+  v.style.alignSelf='center';b.appendChild(v);
+}},
+t30:{g:'◇',sk:'sk30',make:function(b,api,t){
+  var ops=[['▲',function(x,y){return x+y;}],['■',function(x,y){return x-y;}],['●',function(x,y){return x*y;}]];
+  var round=0,ex=[];
+  for(var r=0;r<2;r++){
+    var op=pick(ops),A=2+rnd(8),B=2+rnd(8);
+    if(op[0]==='■'&&B>A){var q=A;A=B;B=q;}
+    ex.push([op,A,B]);}
+  var scr=el('div','code-screen');b.appendChild(scr);
+  function show(){
+    var e=ex[round];
+    scr.innerHTML='<div class="code-cell dim">'+e[1]+'</div><div class="code-cell dim" style="color:#ffd23f">'+e[0][0]+'</div><div class="code-cell dim">'+e[2]+'</div>';}
+  show();
+  function calc(){
+    var e=ex[round],A=e[1],B=e[2];
+    if(G.pen)return Math.floor(A/B);
+    if(round===0&&devMin()<3)return A%B;
+    if(round===1&&G.coffee)return A%B;
+    if(t.L===4&&round===1)return Math.floor(A/B);
+    return e[0][1](A,B);}
+  var typed='',ans=el('div','code-cell');ans.style.margin='4px auto';ans.textContent='?';
+  var pad=el('div','keypad');
+  function redraw(){ans.textContent=typed||'?';}
+  ['1','2','3','4','5','6','7','8','9','СБР','0','ОК'].forEach(function(k){
+    var key=ix(el('button','key'+(isNaN(parseInt(k,10))?' op':''),k));
+    key.addEventListener('click',function(){
+      if(pad.dataset.done)return;
+      if(k==='СБР'){typed='';snd.click();redraw();return;}
+      if(k==='ОК'){
+        if(typed==='')return;
+        if(parseInt(typed,10)===calc()){
+          round++;
+          if(round>=2){pad.dataset.done=1;ans.style.color='var(--green)';api.solve();}
+          else{typed='';redraw();show();snd.good();}
+        }else{api.strike('Ответ неверен');typed='';pad.classList.add('shake');setTimeout(function(){pad.classList.remove('shake');},350);redraw();}
+        return;}
+      if(typed.length>=3)return;
+      snd.click();typed+=k;redraw();});
+    pad.appendChild(key);});
+  b.appendChild(ans);b.appendChild(pad);
+}}
+};
+
+var ids=shuffle(Object.keys(TASKS)).slice(0,5);
+var picked=ids.map(function(id){return TASKS[id];});
+var grid=$('#bays'),ctrlBay=$('#ctrlBay'),bays=[];
+var PLATE=['А','Б','В','Г','Д'];
+picked.forEach(function(task,i){
+  var L=rnd(5),P=1+rnd(3);
+  var bay=el('section','bay '+task.sk);bay.dataset.bay=String(i+1);bay.style.position='relative';
+  bay.appendChild(el('div','bay-label','МОДУЛЬ 0'+(i+1)+' <span class="glyph">'+task.g+'</span> <span class="tpl">ПЛАТА '+PLATE[L]+' · '+'•'.repeat(P)+'</span> <span class="led"></span>'));
+  bay.appendChild(el('div','solved-flag','РЕШЕНО'));
+  var body=el('div','bay-body');
+  var api={
+    solve:function(){
+      if(bay.classList.contains('done'))return;
+      bay.classList.add('done');G.solved++;$('#prog').textContent=G.solved+'/5';
+      snd.good();toast('МОДУЛЬ 0'+(i+1)+' РЕШЕН','ok');
+      if(G.solved===5)armSubmit();},
+    strike:strike,
+    strikes:function(){return G.strikes;}
+  };
+  try{task.make(body,api,{L:L,P:P,letter:PLATE[L]});}
+  catch(err){body.appendChild(data('СБОЙ МОДУЛЯ'));}
+  if(!body.childElementCount)body.appendChild(data('ПУСТО'));
+  bay.appendChild(body);
+  bay.appendChild(el('div','wm',task.g));
+  bays.push(bay);
+});
+grid.insertBefore(bays[0],ctrlBay);
+grid.insertBefore(bays[1],ctrlBay.nextSibling);
+grid.appendChild(bays[2]);grid.appendChild(bays[3]);grid.appendChild(bays[4]);
+
+function armSubmit(){$('#submitBtn').classList.add('armed');toast('ВСЕ МОДУЛИ РЕШЕНЫ — ЖМИТЕ «СДАТЬ РАБОТУ»!','ok');}
+$('#submitBtn').addEventListener('click',function(){
+  if(G.over)return;
+  if(G.solved<5){snd.bad();toast('СНАЧАЛА РЕШИТЕ ВСЕ МОДУЛИ ('+G.solved+'/5)','err');return;}
+  win();});
+
+var disp=$('#display7');
+function renderTime(){
+  var t=Math.max(0,G.time);
+  disp.innerHTML=String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0')+'<small>ДО КОНЦА ПАРЫ</small>';
+  disp.classList.toggle('danger',t<60);}
+function startTimer(){
+  setInterval(function(){
+    if(!G.running||G.over)return;
+    G.time--;renderTime();
+    if(G.time<=10&&G.time>0)snd.tick();
+    if(G.time<=0)fail('ВРЕМЯ ВЫШЛО','Пара закончилась раньше, чем вы договорили.');},1000);}
+function strike(msg){
+  if(G.over)return;
+  G.strikes++;snd.bad();
+  var st=$('#stage');st.classList.remove('boom');void st.offsetWidth;st.classList.add('boom');
+  var led=$('#s'+G.strikes);if(led)led.classList.add('used');
+  G.time=Math.max(0,G.time-60);renderTime();
+  var p=document.createElement('span');p.className='penalty';p.textContent=' −1:00';
+  $('#penBox').appendChild(p);setTimeout(function(){p.remove();},1400);
+  toast('ОШИБКА: '+msg+' (−1:00)','err');
+  if(G.strikes>=3)fail('ОТЧИСЛЕН','Три ошибки. Комиссия непреклонна.');}
+function win(){
+  if(G.over)return;G.over=true;G.running=false;snd.win();
+  var m=Math.floor(G.time/60),s=String(G.time%60).padStart(2,'0');
+  $('#winStats').innerHTML='ОЦЕНКА: <b>'+(G.strikes===0?'ОТЛИЧНО':G.strikes===1?'ХОРОШО':'УДОВЛ.')+'</b><br>ОСТАЛОСЬ ВРЕМЕНИ: <b>'+m+':'+s+'</b><br>ОШИБОК: <b>'+G.strikes+' / 3</b>';
+  setTimeout(function(){$('#winOv').classList.add('show');},450);}
+function fail(title,reason){
+  if(G.over)return;G.over=true;G.running=false;snd.fail();
+  $('#failTitle').textContent=title;$('#failReason').textContent=reason;
+  $('#failProg').textContent=G.solved+' из 5';
+  setTimeout(function(){$('#failOv').classList.add('show');},450);}
+
+var toastT=null;
+function toast(text,tone){
+  var t=$('#toast');t.textContent=text;t.className='show '+(tone||'');
+  clearTimeout(toastT);toastT=setTimeout(function(){t.className='';},2600);}
+
+(function(){
+  var ov=$('#intro'),num=$('#introNum');
+  renderTime();
+  if(reduced){ov.classList.remove('show');G.running=true;startTimer();return;}
+  ov.classList.add('show');
+  var c=3;
+  var iv=setInterval(function(){
+    c--;
+    if(c>0){num.textContent=c;num.classList.remove('go');snd.tick();
+      num.style.animation='none';void num.offsetWidth;num.style.animation='';}
+    else if(c===0){num.textContent='ПОЕХАЛИ!';num.classList.add('go');snd.good();
+      num.style.animation='none';void num.offsetWidth;num.style.animation='';}
+    else{clearInterval(iv);ov.classList.remove('show');G.running=true;startTimer();}},900);
+  snd.tick();})();
 })();
 </script>
 </body>
