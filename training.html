@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>УЧЕБНАЯ БОМБА · тренировка без давления</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🎓</text></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#141d19; --ink:#e6f0ea; --mut:#8aa396; --line:#33513f;
+    --tr:#43e97b; --tr-dim:rgba(67,233,123,.14); --yellow:#ffc826; --red:#ff6a5e;
+    --mono:'IBM Plex Mono',monospace; --disp:'Russo One',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;
+    background-image:
+      radial-gradient(60% 40% at 50% 0%, rgba(67,233,123,.08), transparent 65%),
+      linear-gradient(rgba(140,195,165,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(140,195,165,.05) 1px, transparent 1px);
+    background-size:auto,46px 46px,46px 46px}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    padding:12px 20px;border-bottom:1px solid var(--line);background:rgba(14,22,18,.95);position:relative;z-index:20}
+  .topbar::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:6px;
+    background:repeating-linear-gradient(135deg,#10160f 0 10px,var(--tr) 10px 20px);opacity:.75}
+  .tb-title{font-family:var(--disp);font-size:14px;letter-spacing:.08em;color:var(--tr)}
+  .tb-title small{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.26em;color:var(--mut);margin-top:4px}
+  .tb-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .chip{border:1px solid var(--line);padding:7px 12px;font-size:10px;letter-spacing:.16em;color:var(--mut)}
+  .chip b{color:var(--tr)}
+  .chip.time{color:var(--yellow);font-weight:700;font-size:12px}
+  .tbtn{border:1px solid var(--line);background:transparent;color:var(--ink);font-family:var(--mono);
+    font-size:10px;letter-spacing:.14em;padding:8px 14px;cursor:pointer;transition:all .2s}
+  .tbtn:hover{border-color:var(--tr);color:var(--tr)}
+  .tbtn.on{background:var(--tr-dim);border-color:var(--tr);color:var(--tr)}
+  .home{border:1px solid var(--line);color:var(--ink);text-decoration:none;padding:8px 14px;font-size:10px;letter-spacing:.16em}
+  .home:hover{border-color:var(--tr);color:var(--tr)}
+
+  .stage{display:flex;justify-content:center;padding:36px 14px 80px}
+  .board{width:min(1080px,97vw);position:relative;border-radius:18px;padding:16px 18px 24px;
+    background:linear-gradient(180deg,#eef2ee 0%,#cfd8d2 45%,#b4c0b8 85%,#96a49b 100%);
+    box-shadow:0 40px 80px rgba(0,0,0,.55), inset 0 2px 0 #fff, inset 0 -10px 22px rgba(0,0,0,.25);
+    transform:perspective(1600px) rotateX(1.5deg)}
+  .board-tag{font-family:var(--disp);font-size:10px;letter-spacing:.3em;color:#4c5a52;text-align:center;
+    margin:4px 0 16px;text-shadow:0 1px 0 #fff}
+  .board-tag .stamp{color:#2c7a48;border:2px solid #2c7a48;padding:2px 8px;border-radius:4px;transform:rotate(-2deg);display:inline-block}
+
+  .bays{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media(max-width:860px){.bays{grid-template-columns:1fr}}
+
+  .bay{background:#1b241f;border-radius:12px;border:2px solid #7f8b84;border-top:5px solid var(--tr);
+    overflow:hidden;display:flex;flex-direction:column;position:relative;
+    box-shadow:inset 0 0 0 3px #141b16, 0 4px 12px rgba(0,0,0,.35)}
+  .bay-label{display:flex;gap:8px;align-items:center;padding:8px 12px;
+    background:linear-gradient(180deg,#f2f5f2 0%,#d8ded9 45%,#bdc6c0 100%);color:#1c241f;
+    font-family:var(--disp);font-size:10px;letter-spacing:.12em;border-bottom:2px solid #5f6b64}
+  .bay-label .glyph{font-family:var(--mono);font-size:15px;color:#2c7a48}
+  .bay-label .led{margin-left:auto;width:9px;height:9px;border-radius:50%;background:#7a4a45;flex:none}
+  .bay.done .bay-label .led{background:var(--tr);box-shadow:0 0 10px var(--tr)}
+  .bay.done .bay-label{background:linear-gradient(180deg,#e2f5e8 0%,#b9dcc6 50%,#8fbc9c 100%)}
+  .bay-body{padding:14px;display:flex;flex-direction:column;gap:10px;background:#141b16;color:var(--ink)}
+
+  /* страница мануала внутри модуля */
+  .manual-card{background:#0f1a14;border:1px solid #2c4a3a;border-left:4px solid var(--tr);
+    padding:10px 12px;font-size:11px;line-height:1.75;color:#bfe8cd;border-radius:0 6px 6px 0}
+  .manual-card .mc-head{font-family:var(--disp);font-size:9px;letter-spacing:.2em;color:var(--tr);margin-bottom:6px}
+  .manual-card ol{margin:4px 0 0 16px}
+  .manual-card li{margin:4px 0}
+  .manual-card b{color:#eafff2}
+  body.nomanual .manual-card,body.nomanual .walk-box,body.nomanual .walk{display:none}
+  .walk{align-self:flex-start;border:1px dashed rgba(67,233,123,.5);background:transparent;color:var(--tr);
+    font-family:var(--mono);font-size:10px;letter-spacing:.14em;padding:6px 12px;cursor:pointer;border-radius:6px}
+  .walk:hover{background:var(--tr-dim)}
+  .walk-box{display:none;background:rgba(67,233,123,.08);border:1px solid rgba(67,233,123,.3);border-radius:6px;
+    padding:9px 12px;font-size:11px;line-height:1.8;color:#d6f5e0}
+  .walk-box.open{display:block}
+  .walk-box b{color:var(--tr)}
+
+  .note{font-size:11px;color:#cfe0d6;line-height:1.6}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .opt{border:1.5px solid #5f7a6a;background:#22302a;font-family:var(--disp);font-size:16px;color:var(--ink);
+    padding:11px 8px;cursor:pointer;position:relative;transition:all .18s;box-shadow:0 3px 0 #10160f;border-radius:6px}
+  .opt:hover{border-color:var(--tr);color:var(--tr);transform:translateY(-2px)}
+  .opt.wrong{border-color:var(--red);color:var(--red);animation:shakeX .3s}
+  .opt.right{border-color:var(--tr);color:var(--tr);box-shadow:0 0 16px rgba(67,233,123,.3)}
+  .opt.right::after{content:"✓";position:absolute;right:8px;top:6px;font-size:15px}
+  @keyframes shakeX{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+  .wires{display:flex;flex-direction:column;gap:12px;padding:6px 18px}
+  .wire{position:relative;height:13px;cursor:crosshair}
+  .wire::before,.wire::after{content:"";position:absolute;top:50%;width:9px;height:9px;border-radius:50%;
+    transform:translateY(-50%);background:#5f7a6a}
+  .wire::before{left:-15px}.wire::after{right:-15px}
+  .wire .body{display:block;height:100%;border-radius:7px;position:relative;box-shadow:0 2px 5px rgba(0,0,0,.4), inset 0 2px 2px rgba(255,255,255,.35)}
+  .w-red .body{background:linear-gradient(180deg,#ff8a80,#d63c31 60%,#8c2419)}
+  .w-yellow .body{background:linear-gradient(180deg,#ffe162,#e8b522 60%,#a07810)}
+  .w-blue .body{background:linear-gradient(180deg,#8ac0ff,#3a6fc4 60%,#1e4380)}
+  .w-green .body{background:linear-gradient(180deg,#8ff0b0,#3f9e5f 60%,#1d5c34)}
+  .w-white .body{background:linear-gradient(180deg,#ffffff,#e9e7de 60%,#a8a598)}
+  .wire.cut{filter:grayscale(.6)}
+  .wire.cut .body::after{content:"";position:absolute;left:30%;top:-8px;width:4px;height:29px;background:var(--tr);
+    transform:rotate(18deg);box-shadow:7px 2px 0 rgba(67,233,123,.5)}
+  .wire.shake{animation:shakeX .3s}
+
+  .code-screen{display:flex;gap:8px;justify-content:center;background:#060b08;border:1px solid #3a5a48;padding:9px;border-radius:6px}
+  .code-cell{width:36px;height:42px;border:1px solid #2c4a3a;display:grid;place-items:center;
+    font-family:var(--disp);font-size:20px;color:var(--tr);background:#0d1712;text-shadow:0 0 12px rgba(67,233,123,.5)}
+  .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;max-width:230px;margin:0 auto;width:100%}
+  .key{border:1px solid #5f7a6a;background:#22302a;font-family:var(--disp);font-size:15px;padding:9px 0;
+    cursor:pointer;color:var(--ink);border-radius:6px;box-shadow:0 3px 0 #10160f;transition:all .15s}
+  .key:hover{color:var(--tr);border-color:var(--tr)}
+  .key:active{transform:translateY(2px);box-shadow:0 1px 0 #10160f}
+  .key.op{font-family:var(--mono);font-size:12px}
+  .keypad.shake{animation:shakeX .3s}
+
+  .hold-row{display:flex;align-items:center;justify-content:center;gap:34px;padding:8px 0;flex-wrap:wrap}
+  .hold-btn{width:104px;height:104px;border-radius:50%;border:none;cursor:pointer;font-family:var(--disp);
+    font-size:12px;color:#fff;background:radial-gradient(circle at 34% 30%, #7cf5a0, #1d7a3e 70%);
+    box-shadow:0 7px 0 #14522a, 0 14px 26px rgba(0,0,0,.45);transition:transform .1s;touch-action:none}
+  .hold-btn:active,.hold-btn.holding{transform:translateY(6px);box-shadow:0 1px 0 #14522a}
+  .lamp{width:34px;height:34px;border-radius:50%;border:2px solid #5f7a6a;background:#1c241f;transition:background .1s}
+  .lamp.lit-y{background:#ffd23f;box-shadow:0 0 22px #ffd23f}
+  .lamp.lit-r{background:#ff4438;box-shadow:0 0 22px #ff4438}
+  .lamp.lit-g{background:#43c96e;box-shadow:0 0 22px #43c96e}
+  .lamp.lit-b{background:#4a9dff;box-shadow:0 0 22px #4a9dff}
+  .lamp-block{display:flex;flex-direction:column;align-items:center;gap:9px}
+  .lamp-block span{font-size:8px;letter-spacing:.3em;color:var(--mut)}
+
+  .passport-list{font-size:11px;line-height:2;color:#cfe0d6}
+  .passport-list b{color:var(--tr)}
+  .passport-list .cap{color:var(--mut);font-size:9px;letter-spacing:.22em}
+
+  .overlay{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(6,10,8,.92);
+    opacity:0;pointer-events:none;transition:opacity .3s}
+  .overlay.show{opacity:1;pointer-events:auto}
+  .ov-card{text-align:center;padding:24px;max-width:660px}
+  .ov-frame{border:4px double var(--tr);color:var(--tr);padding:26px 40px;transform:rotate(-2deg)}
+  .ov-big{font-family:var(--disp);font-size:clamp(34px,7vw,64px);letter-spacing:.06em;line-height:1.1}
+  .ov-sub{font-size:12px;letter-spacing:.24em;margin-top:14px;color:#bfe8cd}
+  .ov-text{margin:22px auto 0;font-size:12px;line-height:2;color:#cfe0d6;max-width:520px;text-align:left}
+  .ov-text b{color:var(--tr)}
+  .ov-btns{display:flex;gap:14px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+  .ov-btns a,.ov-btns button{font-family:var(--disp);font-size:13px;letter-spacing:.1em;padding:14px 26px;cursor:pointer;
+    border:2px solid var(--tr);background:var(--tr);color:#0d1712;text-decoration:none;border-radius:8px;transition:all .2s}
+  .ov-btns .ghost{background:transparent;color:var(--tr)}
+  .ov-btns a:hover,.ov-btns button:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(67,233,123,.3)}
+
+  #toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);z-index:95;
+    background:#14201a;border:1px solid var(--line);color:var(--ink);font-size:12px;letter-spacing:.08em;
+    padding:12px 22px;opacity:0;transition:all .3s;pointer-events:none;max-width:92vw;border-radius:8px}
+  #toast.show{opacity:1;transform:translateX(-50%)}
+  #toast.coach{border-color:rgba(67,233,123,.5);color:#d6f5e0}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="tb-title">УЧЕБНАЯ БОМБА · ТРЕНАЖЁР
+    <small>БЕЗ ТАЙМЕРА-УГРОЗЫ · БЕЗ ШТРАФОВ · СУТЬ ТА ЖЕ: ОДИН ВИДИТ, ДРУГОЙ ЗНАЕТ</small>
+  </div>
+  <div class="tb-right">
+    <span class="chip time" id="elapsed">00:00</span>
+    <span class="chip">МОДУЛИ: <b id="prog">0/4</b></span>
+    <button class="tbtn" id="hideManual">СКРЫТЬ МАНУАЛ (КАК В НАСТОЯЩЕЙ)</button>
+    <a class="home" href="index.html">◂ МЕНЮ</a>
+  </div>
+</header>
+
+<main class="stage">
+  <div class="board">
+    <div class="board-tag">ТРЕНИРОВОЧНЫЙ СТЕНД МК-45-Б · <span class="stamp">УЧЕБНАЯ</span> · ОШИБКИ ЗДЕСЬ — ЭТО НОРМАЛЬНО</div>
+    <div class="bays" id="bays"></div>
+  </div>
+</main>
+
+<div class="overlay show" id="introOv">
+  <div class="ov-card">
+    <div class="ov-frame"><div class="ov-big">УЧЕБНАЯ БОМБА</div>
+    <div class="ov-sub">ТРЕНИРОВКА БЕЗ ДАВЛЕНИЯ</div></div>
+    <div class="ov-text">
+      <b>Суть игры:</b> устройство видит один человек, а правила знает другой. Они разговаривают голосами — и только так устройство обезвреживается.<br>
+      <b>Здесь иначе:</b> мануал прикреплён к каждому модулю прямо на стенде, поэтому тренироваться можно в одиночку. Но правило пары сохраняется: <b>читайте правило вслух</b>, прежде чем нажать, — будто диктуете напарнику.<br>
+      <b>Наказания нет:</b> таймер просто считает ваше время, ошибки не штрафуют, а напоминают правило. Отчислить вас невозможно.<br>
+      <b>Кнопка «РАЗБОР»</b> под правилом показывает, как правило применяется к текущему паспорту устройства — сверяйтесь с ней, пока не поймёте логику.<br>
+      Когда освоитесь — нажмите «СКРЫТЬ МАНУАЛ» и пройдите стенд вслепую или позовите напарника: он читает documentation.html, вы смотрите сюда.
+    </div>
+    <div class="ov-btns"><button id="startBtn">НАЧАТЬ ТРЕНИРОВКУ</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="winOv">
+  <div class="ov-card">
+    <div class="ov-frame"><div class="ov-big">СТЕНД ОБЕЗВРЕЖЕН</div>
+    <div class="ov-sub">УЧЕБНАЯ ПРОЙДЕНА · ВРЕМЯ: <span id="winTime">00:00</span></div></div>
+    <div class="ov-text">
+      Вы только что сделали то, что в настоящей игре делают двое: увидели устройство, нашли правила и применили их вслух.<br>
+      Дальше два пути: повторить стенд со скрытым мануалом (или с живым напарником и documentation.html) — либо сразу идти к настоящему устройству МК-45-Б: там будет таймер, штрафы и случайные пять модулей из тридцати. Правила те же.
+    </div>
+    <div class="ov-btns">
+      <button onclick="location.reload()">ЕЩЁ РАЗ</button>
+      <a class="ghost" href="index.html">К НАСТОЯЩЕЙ ИГРЕ</a>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s);};
+var rnd=function(n){return Math.floor(Math.random()*n);};
+var pick=function(a){return a[rnd(a.length)];};
+var shuffle=function(a){for(var i=a.length-1;i>0;i--){var j=rnd(i+1);var t=a[i];a[i]=a[j];a[j]=t;}return a;};
+
+var actx=null,unlocked=false;
+addEventListener('pointerdown',function(){try{
+  actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+  if(actx.state==='suspended')actx.resume();unlocked=true;}catch(e){}});
+function tone(f,d,t,v){d=d||.06;t=t||'square';v=v||.05;
+  if(!unlocked||!actx)return;
+  try{var o=actx.createOscillator(),g=actx.createGain();o.type=t;o.frequency.value=f;
+  g.gain.setValueAtTime(v,actx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+d);
+  o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+d);}catch(e){}}
+var snd={click:function(){tone(880,.05);},good:function(){tone(660,.1,'sine',.07);tone(990,.16,'sine',.07,.1);},
+  soft:function(){tone(300,.12,'sine',.05);}};
+
+/* паспорт (случайный, но постоянный на сессию) */
+var LETTERS='АВЕКМНОРСТУ',VOWELS='АЕИОУЫ';
+function isVow(c){return VOWELS.indexOf(c)>=0;}
+var G={serial:'',letters:[],digits:[],variant:1,batteries:0,bell:false,pen:false,coffee:false,solved:0,seconds:0,started:false};
+(function(){
+  function L(){return pick(LETTERS.split(''));}function D(){return rnd(10);}
+  G.letters=[L(),L(),L()];G.digits=[D(),D(),D()];
+  G.serial=G.letters[0]+G.letters[1]+'-'+G.digits.join('')+'-'+G.letters[2];
+  G.variant=1+rnd(4);G.batteries=rnd(4);
+  G.bell=Math.random()<.5;G.pen=Math.random()<.5;G.coffee=Math.random()<.5;
+  if(!G.bell&&!G.pen&&!G.coffee)G.bell=true;
+})();
+var dSum=G.digits[0]+G.digits[1]+G.digits[2];
+var lastDigit=G.digits[2],firstDigit=G.digits[0];
+var evenCnt=G.digits.filter(function(d){return d%2===0;}).length,oddCnt=3-evenCnt;
+var vowelCount=G.letters.filter(isVow).length;
+var lastLetter=G.letters[2];
+var VAR_COLOR={1:'жёлтый',2:'красный',3:'зелёный',4:'синий'};
+var VAR_LAMP={1:'lit-y',2:'lit-r',3:'lit-g',4:'lit-b'};
+
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
+function ix(e){e.addEventListener('pointerdown',function(ev){ev.stopPropagation();});return e;}
+
+/* мягкий тренерский тост */
+var toastT=null;
+function coach(msg){
+  var t=$('#toast');t.innerHTML='🎓 '+msg;t.className='show coach';
+  clearTimeout(toastT);toastT=setTimeout(function(){t.className='';},4200);
+  snd.soft();
+}
+
+/* elapsed timer (считает вверх, никого не пугает) */
+setInterval(function(){
+  if(!G.started)return;
+  G.seconds++;
+  var m=String(Math.floor(G.seconds/60)).padStart(2,'0'),s=String(G.seconds%60).padStart(2,'0');
+  $('#elapsed').textContent=m+':'+s;
+},1000);
+
+/* каркас модуля: шильдик + страница мануала + разбор + контент */
+function moduleBay(num,glyph,title,ruleHtml,walkHtml,build){
+  var bay=el('section','bay');
+  bay.appendChild(el('div','bay-label','УЧЕБНЫЙ МОДУЛЬ '+num+' <span class="glyph">'+glyph+'</span> '+title+' <span class="led"></span>'));
+  var body=el('div','bay-body');
+  var card=el('div','manual-card','<div class="mc-head">СТРАНИЦА МАНУАЛА · МОДУЛЬ '+num+'</div>'+ruleHtml);
+  body.appendChild(card);
+  var walkBox=el('div','walk-box',walkHtml);
+  var walkBtn=el('button','walk','РАЗБОР: КАК ЭТО ПРИМЕНЯЕТСЯ СЕЙЧАС');
+  walkBtn.addEventListener('click',function(){snd.click();walkBox.classList.toggle('open');
+    walkBtn.textContent=walkBox.classList.contains('open')?'СКРЫТЬ РАЗБОР':'РАЗБОР: КАК ЭТО ПРИМЕНЯЕТСЯ СЕЙЧАС';});
+  body.appendChild(walkBtn);body.appendChild(walkBox);
+  var api={solve:function(){
+    if(bay.classList.contains('done'))return;
+    bay.classList.add('done');G.solved++;$('#prog').textContent=G.solved+'/4';
+    snd.good();coach('Модуль '+num+' обезврежен. Осталось '+(4-G.solved)+'.');
+    if(G.solved===4){$('#winTime').textContent=$('#elapsed').textContent;
+      setTimeout(function(){$('#winOv').classList.add('show');},600);}
+  }};
+  build(body,api);
+  bay.appendChild(body);
+  return bay;
+}
+
+var grid=$('#bays');
+
+/* --- бай 0: паспорт и все производные (учимся собирать данные) --- */
+(function(){
+  var bay=el('section','bay');
+  bay.appendChild(el('div','bay-label','ПАСПОРТ СТЕНДА <span class="glyph">☼</span> ДАННЫЕ И ПРОИЗВОДНЫЕ <span class="led" style="visibility:hidden"></span>'));
+  var body=el('div','bay-body');
+  body.appendChild(el('div','manual-card','<div class="mc-head">ПАМЯТКА · ЧТО ДИКТУЮТ В НАЧАЛЕ</div>'+
+    'В настоящей игре студент читает эти строки вслух, а владелец мануала записывает. Здесь они открыты: сверяйтесь с ними при решении каждого модуля.'));
+  var inds=[];
+  if(G.bell)inds.push('ЗВОНОК');if(G.pen)inds.push('РУЧКА');if(G.coffee)inds.push('КОФЕ');
+  body.appendChild(el('div','passport-list',
+    '<span class="cap">СЕРИЯ</span> <b>'+G.serial+'</b><br>'+
+    '<span class="cap">ВАРИАНТ</span> <b>№ '+G.variant+'</b> · цвет варианта: <b>'+VAR_COLOR[G.variant]+'</b><br>'+
+    '<span class="cap">БАТАРЕИ</span> <b>'+G.batteries+'</b> · <span class="cap">ГОРЯТ ИНДИКАТОРЫ</span> <b>'+(inds.length?inds.join(', '):'НИ ОДИН')+'</b><br>'+
+    '<span class="cap">СУММА ЦИФР СЕРИИ</span> <b>'+dSum+'</b> · <span class="cap">ПОСЛЕДНЯЯ ЦИФРА</span> <b>'+lastDigit+'</b> ('+(lastDigit%2===0?'чётная':'нечётная')+')<br>'+
+    '<span class="cap">ПЕРВАЯ ЦИФРА</span> <b>'+firstDigit+'</b> · <span class="cap">ЧЁТНЫХ/НЕЧЁТНЫХ</span> <b>'+evenCnt+'/'+oddCnt+'</b><br>'+
+    '<span class="cap">ГЛАСНЫХ В СЕРИИ</span> <b>'+vowelCount+'</b> · <span class="cap">ПОСЛЕДНЯЯ БУКВА</span> <b>'+lastLetter+'</b> ('+(isVow(lastLetter)?'гласная':'согласная')+')'));
+  grid.appendChild(bay);
+})();
+
+/* --- модуль U1: выбор числа --- */
+grid.appendChild(moduleBay('U1','◆','ВЫБОР ЧИСЛА',
+  '<ol><li>Посмотрите в паспорте, каких цифр серии больше: чётных или нечётных.</li>'+
+  '<li>Чётных больше → нажмите <b>наименьшее</b> из четырёх чисел.</li>'+
+  '<li>Нечётных больше → нажмите <b>наибольшее</b>.</li></ol>',
+  'Чётных цифр: <b>'+evenCnt+'</b>, нечётных: <b>'+oddCnt+'</b>. Значит цель — '+(evenCnt>oddCnt?'<b>наименьшее</b>':'<b>наибольшее</b>')+' число среди четырёх кнопок.',
+  function(b,api){
+    var set={},nums=[];while(nums.length<4){var n=12+rnd(86);if(!set[n]){set[n]=1;nums.push(n);}}
+    var idx=(evenCnt>oddCnt)?nums.indexOf(Math.min.apply(null,nums)):nums.indexOf(Math.max.apply(null,nums));
+    var box=el('div','opts');
+    nums.forEach(function(v,i){
+      var btn=ix(el('button','opt',String(v)));
+      btn.addEventListener('click',function(){
+        if(box.dataset.done)return;snd.click();
+        if(i===idx){btn.classList.add('right');box.dataset.done=1;api.solve();}
+        else{btn.classList.add('wrong');setTimeout(function(){btn.classList.remove('wrong');},500);
+          coach('Не то число. Напоминание: чётных цифр '+evenCnt+', нечётных '+oddCnt+' → нужно '+(evenCnt>oddCnt?'наименьшее':'наибольшее')+'.');}
+      });
+      box.appendChild(btn);});
+    b.appendChild(box);
+  }));
+
+/* --- модуль U2: провода --- */
+grid.appendChild(moduleBay('U2','#','ПРОВОДА',
+  '<ol><li>Посмотрите в паспорте последнюю цифру серии и её чётность.</li>'+
+  '<li>Последняя чётная → зачеркните <b>красный и жёлтый</b> провода.</li>'+
+  '<li>Последняя нечётная → зачеркните <b>синий и зелёный</b>.</li>'+
+  '<li>Белый провод (если есть) не трогайте никогда.</li></ol>',
+  'Последняя цифра серии: <b>'+lastDigit+'</b> ('+(lastDigit%2===0?'чётная':'нечётная')+') → зачёркиваем пару: <b>'+
+  (lastDigit%2===0?'красный + жёлтый':'синий + зелёный')+'</b>. Белые не трогаем.',
+  function(b,api){
+    var wires=['red','yellow','blue','green'];if(rnd(2))wires.push('white');
+    var need=(lastDigit%2===0)?{red:1,yellow:1}:{blue:1,green:1};
+    var cut={};
+    var box=el('div','wires');
+    shuffle(wires).forEach(function(c){
+      var w=ix(el('div','wire w-'+c,'<span class="body"></span>'));
+      w.addEventListener('click',function(){
+        if(box.dataset.done)return;snd.click();
+        if(!need[c]){w.classList.add('shake');setTimeout(function(){w.classList.remove('shake');},350);
+          coach(c==='white'?'Белый провод трогать нельзя совсем.':'Не тот провод. Напоминание: последняя цифра '+lastDigit+' → пара '+(lastDigit%2===0?'красный+жёлтый':'синий+зелёный')+'.');
+          return;}
+        if(cut[c])return;cut[c]=1;w.classList.add('cut');
+        if(Object.keys(cut).length===2){box.dataset.done=1;api.solve();}
+      });
+      box.appendChild(w);});
+    b.appendChild(box);
+  }));
+
+/* --- модуль U3: код из трёх цифр --- */
+(function(){
+  var d1=(G.batteries+vowelCount)%10,d2=lastDigit,d3=(G.variant*lastDigit)%10;
+  var code=''+d1+d2+d3;
+  grid.appendChild(moduleBay('U3','µ','КОД ДОСТУПА',
+    '<ol><li>Первая цифра кода: батареи + гласных в серии; если вышло 10 или больше — последняя цифра суммы.</li>'+
+    '<li>Вторая цифра кода: последняя цифра серии.</li>'+
+    '<li>Третья цифра кода: вариант × последняя цифра серии; если вышло 10 или больше — последняя цифра произведения.</li>'+
+    '<li>Введите три цифры подряд — проверка автоматическая.</li></ol>',
+    'Батареи <b>'+G.batteries+'</b> + гласных <b>'+vowelCount+'</b> = '+((G.batteries+vowelCount))+' → первая цифра <b>'+d1+'</b>. '+
+    'Последняя цифра серии → вторая <b>'+d2+'</b>. Вариант '+G.variant+' × '+lastDigit+' = '+(G.variant*lastDigit)+' → третья <b>'+d3+'</b>. Код: <b>'+code+'</b>.',
+    function(b,api){
+      var scr=el('div','code-screen'),cells=[];
+      for(var i=0;i<3;i++){cells.push(el('div','code-cell'));scr.appendChild(cells[i]);}
+      b.appendChild(scr);
+      var typed='';
+      function redraw(){cells.forEach(function(c,i){c.textContent=(typed[i]!=null?typed[i]:'');});}
+      var pad=el('div','keypad');
+      ['1','2','3','4','5','6','7','8','9','СБР','0','←'].forEach(function(k){
+        var btn=ix(el('button','key'+(isNaN(parseInt(k,10))?' op':''),k));
+        btn.addEventListener('click',function(){
+          if(pad.dataset.done)return;
+          if(k==='СБР'){typed='';snd.click();redraw();return;}
+          if(k==='←'){typed=typed.slice(0,-1);snd.click();redraw();return;}
+          if(typed.length>=3)return;
+          snd.click();typed+=k;redraw();
+          if(typed.length===3){
+            if(typed===code){pad.dataset.done=1;api.solve();}
+            else{pad.classList.add('shake');setTimeout(function(){pad.classList.remove('shake');},350);
+              typed='';setTimeout(redraw,380);
+              coach('Код не подошёл. Это нормально: откройте РАЗБОР выше и сверьте каждую из трёх цифр по шагам.');}
+          }});
+        pad.appendChild(btn);});
+      b.appendChild(pad);
+    }));
+})();
+
+/* --- модуль U4: кнопка с лампой --- */
+grid.appendChild(moduleBay('U4','◑','КНОПКА И ЛАМПА',
+  '<ol><li>Нажмите и <b>держите</b> большую кнопку: лампа рядом начнёт перебирать цвета.</li>'+
+  '<li>Отпустите кнопку в момент, когда лампа горит <b>цветом вашего варианта</b> (таблица в паспорте: 1 жёлтый, 2 красный, 3 зелёный, 4 синий).</li>'+
+  '<li>Держите не меньше полсекунды, иначе устройство посчитает это случайным тычком.</li></ol>',
+  'Ваш вариант: <b>№ '+G.variant+'</b> → цвет отпускания: <b>'+VAR_COLOR[G.variant]+'</b>. Держите кнопку и ждите этот цвет на лампе.',
+  function(b,api){
+    var btn=ix(el('button','hold-btn','ДЕРЖАТЬ'));
+    var lamp=el('div','lamp');
+    var CLS=['lit-y','lit-r','lit-g','lit-b'];
+    var target=VAR_LAMP[G.variant];
+    var iv=null,cur=null,start=0;
+    function light(c){CLS.forEach(function(x){lamp.classList.remove(x);});if(c)lamp.classList.add(c);cur=c;}
+    btn.addEventListener('pointerdown',function(e){e.preventDefault();
+      if(b.dataset.done)return;
+      btn.classList.add('holding');start=Date.now();snd.click();
+      iv=setInterval(function(){light(CLS[rnd(4)]);},560);light(CLS[rnd(4)]);});
+    function up(){
+      if(!iv)return;clearInterval(iv);iv=null;btn.classList.remove('holding');
+      if(b.dataset.done){light(null);return;}
+      if(Date.now()-start<350){coach('Слишком короткий тычок: кнопку нужно именно держать, пока лампа перебирает цвета.');light(null);return;}
+      if(cur===target){b.dataset.done=1;light(cur);api.solve();}
+      else{coach('Отпустили не на том цвете. Ваш целевой цвет — '+VAR_COLOR[G.variant]+' (вариант № '+G.variant+'). Попробуйте ещё раз: попыток сколько нужно.');light(null);}
+    }
+    addEventListener('pointerup',up);addEventListener('pointercancel',up);
+    var row=el('div','hold-row');row.appendChild(btn);
+    var lb=el('div','lamp-block');lb.appendChild(lamp);lb.appendChild(el('span',null,'ЛАМПА'));
+    row.appendChild(lb);b.appendChild(row);
+  }));
+
+/* переключатель «скрыть мануал» */
+$('#hideManual').addEventListener('click',function(){
+  var on=document.body.classList.toggle('nomanual');
+  this.classList.toggle('on',on);
+  this.textContent=on?'МАНУАЛ СКРЫТ · ПОКАЗАТЬ':'СКРЫТЬ МАНУАЛ (КАК В НАСТОЯЩЕЙ)';
+  coach(on?'Мануал скрыт: теперь как в настоящей игре — правило придётся помнить или читать с documentation.html на втором экране.':'Мануал снова открыт на стенде.');
+});
+
+/* старт */
+$('#startBtn').addEventListener('click',function(){
+  $('#introOv').classList.remove('show');
+  G.started=true;
+  coach('Начнём. Читайте правила вслух, будто рядом напарник, — и действуйте.');
+});
+})();
+</script>
+</body>
+</html>
