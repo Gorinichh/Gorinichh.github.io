@@ -16,7 +16,7 @@
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
-  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);min-height:100vh;overflow-x:hidden;
     background-image:
       radial-gradient(80% 50% at 80% 0%, rgba(84,200,255,.07), transparent 60%),
       linear-gradient(rgba(84,200,255,.035) 1px, transparent 1px),
@@ -40,44 +40,67 @@
   .chip.clock{color:var(--yellow);font-weight:700}
   .home{border:1px solid var(--line);color:var(--ink);text-decoration:none;padding:7px 14px;font-size:11px;letter-spacing:.16em}
   .home:hover{border-color:var(--yellow);color:var(--yellow)}
-  .warnbar{background:var(--red);color:#fff;text-align:center;font-family:var(--disp);font-size:12px;letter-spacing:.14em;padding:9px 16px}
+  .warnbar{background:var(--red);color:#fff;text-align:center;font-family:var(--disp);font-size:12px;
+    letter-spacing:.14em;padding:9px 16px}
   .warnbar::before{content:"⚠ ";}.warnbar::after{content:" ⚠"}
+
   .doc{position:relative;z-index:5;display:grid;grid-template-columns:250px minmax(0,1fr);gap:30px;max-width:1180px;margin:0 auto;padding:34px 24px 80px}
-  @media(max-width:900px){.doc{grid-template-columns:1fr}}
+  @media(max-width:900px){.doc{grid-template-columns:1fr;gap:18px}}
+  @media(max-width:700px){.doc{padding:22px 10px 60px}}
+
   .toc{position:sticky;top:120px;align-self:start;border:1px solid var(--line);background:rgba(16,24,32,.9);padding:18px}
   @media(max-width:900px){.toc{position:static;display:flex;flex-wrap:wrap;gap:6px;padding:12px}}
   .toc h2{font-size:10px;letter-spacing:.34em;color:var(--mut);margin-bottom:14px}
+  @media(max-width:900px){.toc h2{width:100%;margin-bottom:4px}}
   .toc a{display:block;color:#9fb2c2;text-decoration:none;font-size:11px;letter-spacing:.08em;padding:7px 10px;border-left:2px solid transparent;margin-bottom:2px}
   .toc a:hover{color:var(--ink);background:var(--cyan-dim)}
   .toc a.active{color:var(--cyan);border-left-color:var(--cyan);background:var(--cyan-dim)}
   .toc a b{color:inherit;font-weight:700;margin-right:8px}
-  .sec{border:1px solid var(--line);background:rgba(16,24,32,.85);margin-bottom:26px;scroll-margin-top:130px}
+
+  .sec{border:1px solid var(--line);background:rgba(16,24,32,.85);margin-bottom:26px;scroll-margin-top:130px;min-width:0}
   .sec-head{display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px dashed var(--line);flex-wrap:wrap}
+  @media(max-width:700px){.sec-head{padding:12px 12px}}
   .sec-num{font-family:var(--disp);font-size:22px;color:var(--cyan);opacity:.9}
-  .sec-head h2{font-family:var(--disp);font-size:clamp(15px,2vw,19px);letter-spacing:.06em}
+  .sec-head h2{font-family:var(--disp);font-size:clamp(14px,2vw,19px);letter-spacing:.06em}
   .sec-head .tag{margin-left:auto;font-size:9px;letter-spacing:.24em;color:var(--mut);border:1px solid var(--line);padding:4px 10px}
-  .sec-body{padding:20px 22px 24px;font-size:13px;line-height:1.9;color:#b9c6d2}
+  .sec-body{padding:20px 22px 24px;font-size:13px;line-height:1.9;color:#b9c6d2;min-width:0;overflow-wrap:break-word}
+  @media(max-width:700px){.sec-body{padding:14px 12px 18px;font-size:12px}}
   .sec-body b{color:var(--yellow)}
   .sec-body .imp{color:#ffb3ad}
   .rule{border-left:3px solid var(--cyan);background:var(--cyan-dim);padding:10px 16px;margin:12px 0;font-size:12.5px}
+  .rule ol{margin:6px 0 0 6px;padding-left:20px}
+  .rule ol li{margin:5px 0}
+  .rule ol li::marker{color:var(--cyan);font-weight:700}
+
   .te{border:1px solid var(--line);margin:16px 0;background:rgba(10,16,22,.65)}
   .te-head{display:flex;gap:12px;align-items:center;padding:10px 16px;border-bottom:1px dashed var(--line);background:rgba(84,200,255,.06);flex-wrap:wrap}
   .te-glyph{font-family:var(--mono);font-size:20px;color:var(--cyan)}
   .te-title{font-family:var(--disp);font-size:13px;letter-spacing:.06em}
   .te-id{margin-left:auto;font-size:9px;letter-spacing:.2em;color:var(--mut)}
-  .te-body{padding:12px 16px 14px;font-size:12.5px;line-height:1.9}
+  .te-body{padding:12px 16px 14px;font-size:12.5px;line-height:1.9;min-width:0;overflow-wrap:break-word}
+  @media(max-width:700px){.te-body{padding:10px 10px 12px;font-size:12px}}
   .te-body .rec{color:var(--mut);font-size:11px;display:block;margin-bottom:8px}
-  .te-body ol{margin:6px 0 6px 4px;padding-left:18px}
+  .te-body ol{margin:6px 0 6px 4px;padding-left:22px}
   .te-body ol li{margin:7px 0;padding-left:6px;border-left:2px solid rgba(84,200,255,.3)}
+  .te-body ol li::marker{color:var(--cyan);font-weight:700;font-size:13px}
   .te-body ol li b{color:var(--cyan)}
   .te-body .var{display:block;margin-top:8px;padding:6px 10px;border:1px dashed rgba(255,200,38,.35);color:#e8d59a;font-size:11px}
-  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px}
+
+  /* таблицы: скроллятся внутри себя, не растягивают страницу */
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px;
+    display:block;overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+  @media(max-width:700px){table{font-size:11px}}
   th,td{border:1px solid var(--line);padding:8px 12px;text-align:left}
+  @media(max-width:700px){th,td{padding:6px 8px}}
   th{font-size:9px;letter-spacing:.26em;color:var(--mut);font-weight:400}
   td b{color:var(--ink)}
+  td.mc{font-family:var(--mono);font-weight:700;letter-spacing:3px;color:#b8e6ff;white-space:nowrap;font-size:13px}
   .dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin-right:8px}
   .sw{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-1px;margin:0 3px}
-  footer{position:relative;z-index:5;border-top:1px solid var(--line);padding:18px 26px;font-size:10px;letter-spacing:.22em;color:var(--mut);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+  footer{position:relative;z-index:5;border-top:1px solid var(--line);padding:18px 26px;
+    font-size:10px;letter-spacing:.22em;color:var(--mut);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
   @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
@@ -344,7 +367,7 @@
         <div class="te-body"><span class="rec">Как выглядит: пять или шесть проводов, из них четыре цветных и один-два белых.</span>
         <ol>
           <li>Найдите несущий провод — тот, который трогать нельзя. Если горит КОФЕ — его цвет задаёт последняя цифра серии: 0, 4, 8 → жёлтый; 1, 5, 9 → красный; 2, 6 → зелёный; 3, 7 → синий. Если КОФЕ не горит и буква платы Д — несущий белый. Иначе несущий — цвет вашего варианта по Приложению А.</li>
-          <li>Зачеркните все провода, кроме несущего; порядок любой. Если несущим оказался белый — не трогайте ни один белый провод (их может быть два): зачёркиваются только четыре цветных.</li>
+          <li>Зачеркните все провода, кроме несущего; порядок любой. Если несущий — белый, то белых проводов не трогайте вообще (их может быть два): зачёркиваются только четыре цветных.</li>
         </ol>
         <span class="var">ВАРИАТИВНО: пять или шесть проводов.</span></div></div>
       </div>
@@ -478,17 +501,17 @@
         <div class="te"><div class="te-head"><span class="te-glyph">☆</span><span class="te-title">22 · ПЕРЕДАЧА ЛАМПОЙ</span><span class="te-id">СМОТРИТ НА ВАШИ ЧАСЫ</span></div>
         <div class="te-body"><span class="rec">Как выглядит: мигающая лампа с подписью «ПЕРЕДАЧА» и четыре кнопки с буквами.</span>
         <ol>
-          <li>Запишите, что мигает лампа: короткая вспышка — точка, длинная — тире.</li>
-          <li>Если минута на ваших часах нечётная — в записи поменяйте все точки на тире и все тире на точки.</li>
+          <li>Запишите, что мигает лампа, знаками: короткая вспышка — «.», длинная — «-».</li>
+          <li>Если минута на ваших часах нечётная — поменяйте в записи все «.» на «-» и все «-» на «.».</li>
           <li>Если горит КОФЕ — прочитайте запись задом наперёд.</li>
-          <li>Если меток на плате три — снова поменяйте точки и тире местами.</li>
+          <li>Если меток на плате три — снова поменяйте все «.» на «-» и все «-» на «.».</li>
           <li>Найдите итоговую запись в таблице Приложения Б и нажмите эту букву.</li>
         </ol></div></div>
 
         <div class="te"><div class="te-head"><span class="te-glyph">■</span><span class="te-title">23 · ПОВТОР СО СДВИГОМ</span><span class="te-id">СМОТРИТ НА СЧЁТ</span></div>
         <div class="te-body"><span class="rec">Как выглядит: квадратная плашка, которая мигает четырьмя-пятью цветами по кругу, и четыре цветные кнопки.</span>
         Плашка повторяет свою последовательность бесконечно, пока модуль не решён, — пересматривать можно сколько угодно раз.
-        Круг цветов: красный → жёлтый → зелёный → синий → снова красный.
+        Круг цветов: красный → жёлтый → зелёный → синий → красный.
         <ol>
           <li>Сосчитайте сдвиг: число ошибок плюс номер варианта минус один плюс номер буквы платы. Отнимайте от суммы 4, пока не останется значение от 0 до 3.</li>
           <li>Если решено три модуля или больше — прибавьте к сдвигу 1 и снова вычтите 4, если вышло 4.</li>
@@ -512,7 +535,7 @@
         Проверяйте условия по порядку сверху вниз; сработавшее первое и даёт ответ.
         <ol>
           <li>Горят все три индикатора сразу — ответ 0.</li>
-          <li>Все кубики показывают одно и то же: при двух метках на плате ответ — сумма очков, иначе — произведение.</li>
+          <li>Все кубики одинаковые: при двух метках на плате ответ — сумма очков, иначе — произведение.</li>
           <li>Кубиков три: при чётном варианте ответ — сумма очков, при нечётном — разность наибольшего и наименьшего.</li>
           <li>Кубиков два: при чётном варианте ответ — сумма, при нечётном — разность большего и меньшего.</li>
         </ol>
@@ -569,7 +592,7 @@
 
     <section class="sec" id="appA">
       <div class="sec-head"><span class="sec-num">А</span><h2>ПРИЛОЖЕНИЕ А · ЦВЕТА ВАРИАНТА</h2><span class="tag">ДЛЯ 10 И 18</span></div>
-            <div class="sec-body">
+      <div class="sec-body">
         <table>
           <tr><th>ВАРИАНТ</th><th>ЦВЕТ ВАРИАНТА</th><th>НОМЕР В КРУГУ ЗАДАНИЙ 03 И 18</th></tr>
           <tr><td>1</td><td><span class="dot" style="background:#ffd23f"></span>жёлтый</td><td>0</td></tr>
@@ -577,10 +600,10 @@
           <tr><td>3</td><td><span class="dot" style="background:#43c96e"></span>зелёный</td><td>2</td></tr>
           <tr><td>4</td><td><span class="dot" style="background:#4a9dff"></span>синий</td><td>3</td></tr>
         </table>
-        <div class="rule"><b>В игре два разных круга цветов — не смешивайте их, это частая причина ошибок:</b>
+        <div class="rule"><b>В игре два разных круга цветов — не смешивайте их:</b>
         <ol>
-          <li><b>Круг позиций</b> (задания 03 и 18): жёлтый → красный → зелёный → синий → жёлтый. Номера в таблице выше относятся именно к нему.</li>
-          <li><b>Круг сдвигов</b> (задание 23): красный → жёлтый → зелёный → синий → красный. Шаги сдвига отсчитываются только в этом порядке; номера из таблицы к нему не относятся.</li>
+          <li><b>Круг позиций</b> (задания 03 и 18): жёлтый → красный → зелёный → синий → жёлтый. Номера в таблице выше относятся к нему.</li>
+          <li><b>Круг сдвигов</b> (задание 23): красный → жёлтый → зелёный → синий → красный. Шаги сдвига отсчитываются только в этом порядке.</li>
         </ol></div>
       </div>
     </section>
@@ -588,16 +611,16 @@
     <section class="sec" id="appB">
       <div class="sec-head"><span class="sec-num">Б</span><h2>ПРИЛОЖЕНИЕ Б · АЗБУКА МОРЗЕ</h2><span class="tag">ДЛЯ 22</span></div>
       <div class="sec-body">
-        Короткая вспышка лампы — точка, длинная — тире.
+        Короткая вспышка лампы — точка «.», длинная вспышка — тире «-».
         <table>
           <tr><th>БУКВА</th><th>КОД</th><th>БУКВА</th><th>КОД</th><th>БУКВА</th><th>КОД</th></tr>
-          <tr><td>А</td><td>точка тире</td><td>Ж</td><td>точка точка точка тире</td><td>О</td><td>тире тире тире</td></tr>
-          <tr><td>Б</td><td>тире точка точка точка</td><td>З</td><td>тире тире точка точка</td><td>П</td><td>точка тире тире точка</td></tr>
-          <tr><td>В</td><td>точка тире тире</td><td>И</td><td>точка точка</td><td>Р</td><td>точка тире точка</td></tr>
-          <tr><td>Г</td><td>тире тире точка</td><td>К</td><td>тире точка тире</td><td>С</td><td>точка точка точка</td></tr>
-          <tr><td>Д</td><td>тире точка точка</td><td>Л</td><td>точка тире точка точка</td><td>Т</td><td>тире</td></tr>
-          <tr><td></td><td></td><td>М</td><td>тире тире</td><td>У</td><td>точка точка тире</td></tr>
-          <tr><td></td><td></td><td>Н</td><td>тире точка</td><td></td><td></td></tr>
+          <tr><td>А</td><td class="mc">.-</td><td>Ж</td><td class="mc">...-</td><td>О</td><td class="mc">---</td></tr>
+          <tr><td>Б</td><td class="mc">-...</td><td>З</td><td class="mc">--..</td><td>П</td><td class="mc">.--.</td></tr>
+          <tr><td>В</td><td class="mc">.--</td><td>И</td><td class="mc">..</td><td>Р</td><td class="mc">.-.</td></tr>
+          <tr><td>Г</td><td class="mc">--.</td><td>К</td><td class="mc">-.-</td><td>С</td><td class="mc">...</td></tr>
+          <tr><td>Д</td><td class="mc">-..</td><td>Л</td><td class="mc">.-..</td><td>Т</td><td class="mc">-</td></tr>
+          <tr><td></td><td></td><td>М</td><td class="mc">--</td><td>У</td><td class="mc">..-</td></tr>
+          <tr><td></td><td></td><td>Н</td><td class="mc">-.</td><td></td><td></td></tr>
         </table>
       </div>
     </section>
