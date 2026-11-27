@@ -63,7 +63,6 @@
   .bay.done .bay-label{background:linear-gradient(180deg,#e2f5e8 0%,#b9dcc6 50%,#8fbc9c 100%)}
   .bay-body{padding:14px;display:flex;flex-direction:column;gap:10px;background:#141b16;color:var(--ink)}
 
-  /* страница мануала внутри модуля */
   .manual-card{background:#0f1a14;border:1px solid #2c4a3a;border-left:4px solid var(--tr);
     padding:10px 12px;font-size:11px;line-height:1.75;color:#bfe8cd;border-radius:0 6px 6px 0}
   .manual-card .mc-head{font-family:var(--disp);font-size:9px;letter-spacing:.2em;color:var(--tr);margin-bottom:6px}
@@ -79,7 +78,6 @@
   .walk-box.open{display:block}
   .walk-box b{color:var(--tr)}
 
-  .note{font-size:11px;color:#cfe0d6;line-height:1.6}
   .opts{display:grid;grid-template-columns:1fr 1fr;gap:9px}
   .opt{border:1.5px solid #5f7a6a;background:#22302a;font-family:var(--disp);font-size:16px;color:var(--ink);
     padding:11px 8px;cursor:pointer;position:relative;transition:all .18s;box-shadow:0 3px 0 #10160f;border-radius:6px}
@@ -140,7 +138,7 @@
   .ov-frame{border:4px double var(--tr);color:var(--tr);padding:26px 40px;transform:rotate(-2deg)}
   .ov-big{font-family:var(--disp);font-size:clamp(34px,7vw,64px);letter-spacing:.06em;line-height:1.1}
   .ov-sub{font-size:12px;letter-spacing:.24em;margin-top:14px;color:#bfe8cd}
-  .ov-text{margin:22px auto 0;font-size:12px;line-height:2;color:#cfe0d6;max-width:520px;text-align:left}
+  .ov-text{margin:22px auto 0;font-size:12px;line-height:2;color:#cfe0d6;max-width:540px;text-align:left}
   .ov-text b{color:var(--tr)}
   .ov-btns{display:flex;gap:14px;justify-content:center;margin-top:26px;flex-wrap:wrap}
   .ov-btns a,.ov-btns button{font-family:var(--disp);font-size:13px;letter-spacing:.1em;padding:14px 26px;cursor:pointer;
@@ -185,7 +183,7 @@
       <b>Здесь иначе:</b> мануал прикреплён к каждому модулю прямо на стенде, поэтому тренироваться можно в одиночку. Но правило пары сохраняется: <b>читайте правило вслух</b>, прежде чем нажать, — будто диктуете напарнику.<br>
       <b>Наказания нет:</b> таймер просто считает ваше время, ошибки не штрафуют, а напоминают правило. Отчислить вас невозможно.<br>
       <b>Кнопка «РАЗБОР»</b> под правилом показывает, как правило применяется к текущему паспорту устройства — сверяйтесь с ней, пока не поймёте логику.<br>
-      Когда освоитесь — нажмите «СКРЫТЬ МАНУАЛ» и пройдите стенд вслепую или позовите напарника: он читает documentation.html, вы смотрите сюда.
+      Освоитесь — нажмите «СКРЫТЬ МАНУАЛ» и пройдите стенд вслепую или позовите напарника: он читает documentation.html, вы смотрите сюда.
     </div>
     <div class="ov-btns"><button id="startBtn">НАЧАТЬ ТРЕНИРОВКУ</button></div>
   </div>
@@ -228,7 +226,6 @@ function tone(f,d,t,v){d=d||.06;t=t||'square';v=v||.05;
 var snd={click:function(){tone(880,.05);},good:function(){tone(660,.1,'sine',.07);tone(990,.16,'sine',.07,.1);},
   soft:function(){tone(300,.12,'sine',.05);}};
 
-/* паспорт (случайный, но постоянный на сессию) */
 var LETTERS='АВЕКМНОРСТУ',VOWELS='АЕИОУЫ';
 function isVow(c){return VOWELS.indexOf(c)>=0;}
 var G={serial:'',letters:[],digits:[],variant:1,batteries:0,bell:false,pen:false,coffee:false,solved:0,seconds:0,started:false};
@@ -251,7 +248,6 @@ var VAR_LAMP={1:'lit-y',2:'lit-r',3:'lit-g',4:'lit-b'};
 function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
 function ix(e){e.addEventListener('pointerdown',function(ev){ev.stopPropagation();});return e;}
 
-/* мягкий тренерский тост */
 var toastT=null;
 function coach(msg){
   var t=$('#toast');t.innerHTML='🎓 '+msg;t.className='show coach';
@@ -259,7 +255,6 @@ function coach(msg){
   snd.soft();
 }
 
-/* elapsed timer (считает вверх, никого не пугает) */
 setInterval(function(){
   if(!G.started)return;
   G.seconds++;
@@ -267,13 +262,11 @@ setInterval(function(){
   $('#elapsed').textContent=m+':'+s;
 },1000);
 
-/* каркас модуля: шильдик + страница мануала + разбор + контент */
 function moduleBay(num,glyph,title,ruleHtml,walkHtml,build){
   var bay=el('section','bay');
   bay.appendChild(el('div','bay-label','УЧЕБНЫЙ МОДУЛЬ '+num+' <span class="glyph">'+glyph+'</span> '+title+' <span class="led"></span>'));
   var body=el('div','bay-body');
-  var card=el('div','manual-card','<div class="mc-head">СТРАНИЦА МАНУАЛА · МОДУЛЬ '+num+'</div>'+ruleHtml);
-  body.appendChild(card);
+  body.appendChild(el('div','manual-card','<div class="mc-head">СТРАНИЦА МАНУАЛА · МОДУЛЬ '+num+'</div>'+ruleHtml));
   var walkBox=el('div','walk-box',walkHtml);
   var walkBtn=el('button','walk','РАЗБОР: КАК ЭТО ПРИМЕНЯЕТСЯ СЕЙЧАС');
   walkBtn.addEventListener('click',function(){snd.click();walkBox.classList.toggle('open');
@@ -293,7 +286,7 @@ function moduleBay(num,glyph,title,ruleHtml,walkHtml,build){
 
 var grid=$('#bays');
 
-/* --- бай 0: паспорт и все производные (учимся собирать данные) --- */
+/* ===== БАЙ ПАСПОРТА: тело обязательно прикрепляется к байу ===== */
 (function(){
   var bay=el('section','bay');
   bay.appendChild(el('div','bay-label','ПАСПОРТ СТЕНДА <span class="glyph">☼</span> ДАННЫЕ И ПРОИЗВОДНЫЕ <span class="led" style="visibility:hidden"></span>'));
@@ -313,7 +306,7 @@ var grid=$('#bays');
   grid.appendChild(bay);
 })();
 
-/* --- модуль U1: выбор числа --- */
+/* U1 */
 grid.appendChild(moduleBay('U1','◆','ВЫБОР ЧИСЛА',
   '<ol><li>Посмотрите в паспорте, каких цифр серии больше: чётных или нечётных.</li>'+
   '<li>Чётных больше → нажмите <b>наименьшее</b> из четырёх чисел.</li>'+
@@ -335,7 +328,7 @@ grid.appendChild(moduleBay('U1','◆','ВЫБОР ЧИСЛА',
     b.appendChild(box);
   }));
 
-/* --- модуль U2: провода --- */
+/* U2 */
 grid.appendChild(moduleBay('U2','#','ПРОВОДА',
   '<ol><li>Посмотрите в паспорте последнюю цифру серии и её чётность.</li>'+
   '<li>Последняя чётная → зачеркните <b>красный и жёлтый</b> провода.</li>'+
@@ -362,7 +355,7 @@ grid.appendChild(moduleBay('U2','#','ПРОВОДА',
     b.appendChild(box);
   }));
 
-/* --- модуль U3: код из трёх цифр --- */
+/* U3 */
 (function(){
   var d1=(G.batteries+vowelCount)%10,d2=lastDigit,d3=(G.variant*lastDigit)%10;
   var code=''+d1+d2+d3;
@@ -371,7 +364,7 @@ grid.appendChild(moduleBay('U2','#','ПРОВОДА',
     '<li>Вторая цифра кода: последняя цифра серии.</li>'+
     '<li>Третья цифра кода: вариант × последняя цифра серии; если вышло 10 или больше — последняя цифра произведения.</li>'+
     '<li>Введите три цифры подряд — проверка автоматическая.</li></ol>',
-    'Батареи <b>'+G.batteries+'</b> + гласных <b>'+vowelCount+'</b> = '+((G.batteries+vowelCount))+' → первая цифра <b>'+d1+'</b>. '+
+    'Батареи <b>'+G.batteries+'</b> + гласных <b>'+vowelCount+'</b> = '+(G.batteries+vowelCount)+' → первая цифра <b>'+d1+'</b>. '+
     'Последняя цифра серии → вторая <b>'+d2+'</b>. Вариант '+G.variant+' × '+lastDigit+' = '+(G.variant*lastDigit)+' → третья <b>'+d3+'</b>. Код: <b>'+code+'</b>.',
     function(b,api){
       var scr=el('div','code-screen'),cells=[];
@@ -399,10 +392,10 @@ grid.appendChild(moduleBay('U2','#','ПРОВОДА',
     }));
 })();
 
-/* --- модуль U4: кнопка с лампой --- */
+/* U4 */
 grid.appendChild(moduleBay('U4','◑','КНОПКА И ЛАМПА',
   '<ol><li>Нажмите и <b>держите</b> большую кнопку: лампа рядом начнёт перебирать цвета.</li>'+
-  '<li>Отпустите кнопку в момент, когда лампа горит <b>цветом вашего варианта</b> (таблица в паспорте: 1 жёлтый, 2 красный, 3 зелёный, 4 синий).</li>'+
+  '<li>Отпустите кнопку в момент, когда лампа горит <b>цветом вашего варианта</b> (1 жёлтый, 2 красный, 3 зелёный, 4 синий).</li>'+
   '<li>Держите не меньше полсекунды, иначе устройство посчитает это случайным тычком.</li></ol>',
   'Ваш вариант: <b>№ '+G.variant+'</b> → цвет отпускания: <b>'+VAR_COLOR[G.variant]+'</b>. Держите кнопку и ждите этот цвет на лампе.',
   function(b,api){
@@ -421,7 +414,7 @@ grid.appendChild(moduleBay('U4','◑','КНОПКА И ЛАМПА',
       if(b.dataset.done){light(null);return;}
       if(Date.now()-start<350){coach('Слишком короткий тычок: кнопку нужно именно держать, пока лампа перебирает цвета.');light(null);return;}
       if(cur===target){b.dataset.done=1;light(cur);api.solve();}
-      else{coach('Отпустили не на том цвете. Ваш целевой цвет — '+VAR_COLOR[G.variant]+' (вариант № '+G.variant+'). Попробуйте ещё раз: попыток сколько нужно.');light(null);}
+      else{coach('Отпустили не на том цвете. Ваш целевой цвет — '+VAR_COLOR[G.variant]+' (вариант № '+G.variant+'). Попыток сколько нужно.');light(null);}
     }
     addEventListener('pointerup',up);addEventListener('pointercancel',up);
     var row=el('div','hold-row');row.appendChild(btn);
@@ -429,7 +422,6 @@ grid.appendChild(moduleBay('U4','◑','КНОПКА И ЛАМПА',
     row.appendChild(lb);b.appendChild(row);
   }));
 
-/* переключатель «скрыть мануал» */
 $('#hideManual').addEventListener('click',function(){
   var on=document.body.classList.toggle('nomanual');
   this.classList.toggle('on',on);
@@ -437,7 +429,6 @@ $('#hideManual').addEventListener('click',function(){
   coach(on?'Мануал скрыт: теперь как в настоящей игре — правило придётся помнить или читать с documentation.html на втором экране.':'Мануал снова открыт на стенде.');
 });
 
-/* старт */
 $('#startBtn').addEventListener('click',function(){
   $('#introOv').classList.remove('show');
   G.started=true;
