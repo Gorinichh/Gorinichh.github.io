@@ -309,6 +309,7 @@ var grid=$('#bays');
     '<span class="cap">СУММА ЦИФР СЕРИИ</span> <b>'+dSum+'</b> · <span class="cap">ПОСЛЕДНЯЯ ЦИФРА</span> <b>'+lastDigit+'</b> ('+(lastDigit%2===0?'чётная':'нечётная')+')<br>'+
     '<span class="cap">ПЕРВАЯ ЦИФРА</span> <b>'+firstDigit+'</b> · <span class="cap">ЧЁТНЫХ/НЕЧЁТНЫХ</span> <b>'+evenCnt+'/'+oddCnt+'</b><br>'+
     '<span class="cap">ГЛАСНЫХ В СЕРИИ</span> <b>'+vowelCount+'</b> · <span class="cap">ПОСЛЕДНЯЯ БУКВА</span> <b>'+lastLetter+'</b> ('+(isVow(lastLetter)?'гласная':'согласная')+')'));
+  bay.appendChild(body);
   grid.appendChild(bay);
 })();
 
