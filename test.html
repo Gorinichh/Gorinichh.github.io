@@ -87,8 +87,8 @@
     box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,0,0,.15)}
   .bay-label .glyph{font-family:var(--mono);font-size:15px;color:var(--sk,#333);margin-left:2px}
   .bay-label .tpl{margin-left:6px;background:linear-gradient(180deg,#d3d8dd,#aab0b7);color:#1c2126;
-    border:1px solid #878d94;border-radius:3px;padding:2px 7px;font-family:var(--mono);font-size:9px;letter-spacing:.14em}
   .bay-label .tpl .pips{letter-spacing:3px;color:#0d1116;font-weight:700;margin-left:3px}
+    border:1px solid #878d94;border-radius:3px;padding:2px 7px;font-family:var(--mono);font-size:9px;letter-spacing:.14em}
   .bay-label .led{margin-left:auto;flex:none;width:9px;height:9px;border-radius:50%;
     background:radial-gradient(circle at 35% 30%,#ff6a5e,#8c2f27);box-shadow:0 0 8px rgba(255,60,40,.7);
     animation:blink 1.4s steps(1) infinite}
@@ -425,8 +425,7 @@ var G={running:false,over:false,time:720,strikes:0,solved:0,serial:'',letters:[]
   if(!G.bell&&!G.pen&&!G.coffee)G.bell=true;
 })();
 var dSum=G.digits[0]+G.digits[1]+G.digits[2];
-var lastDigit=G.digits[2],firstDigit=G.digits[0];
-var lastLetter=G.letters[2];
+var lastDigit=G.digits[2];
 var vowelCount=G.letters.filter(isVow).length;
 var evenCnt=G.digits.filter(function(d){return d%2===0;}).length,oddCnt=3-evenCnt;
 
@@ -516,7 +515,7 @@ t02:{g:'∑',sk:'sk02',make:function(b,api,t){
   var sums=nums.map(ds);
   function calc(){
     var wantMax=(G.variant%2===1);
-    if(firstDigit%2===0)wantMax=!wantMax;
+    if(devMin()<4)wantMax=!wantMax;
     var tgt=wantMax?Math.max.apply(null,sums):Math.min.apply(null,sums);
     var f=sums.indexOf(tgt),l=sums.lastIndexOf(tgt);
     return (f===l)?f:((t.P%2===1)?f:l);}
@@ -528,7 +527,8 @@ t03:{g:'π',sk:'sk03',make:function(b,api,t){
   var order=[['красный','c-red'],['жёлтый','c-yellow'],['зелёный','c-green'],['синий','c-blue']];
   function calc(){
     var base={0:1,1:0,2:2,3:3}[G.batteries];
-    base=(base+t.L)%4;
+    base=(base+G.solved)%4;
+    if(t.L===0||t.L===2||t.L===4)base=(base+1)%4;
     if(G.coffee)base=3-base;
     return base;}
   b.appendChild(optsGrid(order.map(function(o){return '<span class="'+o[1]+'">●</span> '+o[0];}),function(i,btn,box){
@@ -537,7 +537,7 @@ t03:{g:'π',sk:'sk03',make:function(b,api,t){
 }},
 t04:{g:'≡',sk:'sk04',make:function(b,api,t){
   var cnt=pick([6,8]);
-  var inv=(G.bell?1:0)+((t.L===1||t.L===3)?1:0)+(isVow(lastLetter)?1:0);
+  var inv=(G.bell?1:0)+(G.solved>=3?1:0)+(t.L%2);
   var par=(lastDigit%2+inv)%2;
   var nums;
   do{nums=[];for(var i=0;i<cnt;i++)nums.push(10+rnd(90));}
@@ -556,7 +556,7 @@ t04:{g:'≡',sk:'sk04',make:function(b,api,t){
 }},
 t05:{g:'Φ',sk:'sk05',make:function(b,api,t){
   var cnt=pick([4,6]),V=['А','Е','И','О','У'],C=['В','К','М','Н','Р','С','Т'];
-  var inv=(G.pen?1:0)+(t.P===3?1:0)+(lastDigit%2===0?1:0);
+  var inv=(G.pen?1:0)+(devMin()%2===0?1:0)+(t.P===3?1:0);
   var needVowel=((vowelCount<=1?0:1)+inv)%2;
   var four=[];
   if(needVowel){four.push(pick(V));for(var i=1;i<cnt;i++)four.push(pick(C));}
@@ -583,7 +583,7 @@ t06:{g:'÷',sk:'sk06',make:function(b,api,t){
     else if(Q===2)group=G.bell?pool.filter(function(f){return val(f)>1;}):pool.filter(function(f){return val(f)<1;});
     else group=pool.slice();
     var wantMin=(G.variant%2===0);
-    if(t.L%2===0)wantMin=!wantMin;
+    if(realMin()%2===0)wantMin=!wantMin;
     var tgt=group[0];
     group.forEach(function(x){if(wantMin?val(x)<val(tgt):val(x)>val(tgt))tgt=x;});
     return pool.indexOf(tgt);}
@@ -596,10 +596,10 @@ t07:{g:'∩',sk:'sk07',make:function(b,api,t){
   var pool=shuffle([['III',3],['IV',4],['VIII',8],['IX',9],['XVI',16],['XXIII',23],['XIV',14],['XXVII',27],['XLII',42],['LI',51],['LXIV',64],['LXXVII',77]]).slice(0,cnt);
   var vals=pool.map(function(p){return p[1];});
   function calc(){
-    if(dSum%3===0||(t.P===2&&G.coffee)){
+    if(G.solved%3===2||(t.P===2&&G.coffee)){
       var s=vals.slice().sort(function(a,b){return a-b;});
       return vals.indexOf(s[Math.floor((cnt-1)/2)]);}
-    var base=(firstDigit%2===0)?0:1;
+    var base=(G.digits[0]%2===0)?0:1;
     if(G.coffee)base=1-base;
     return base===0?vals.indexOf(Math.min.apply(null,vals)):vals.indexOf(Math.max.apply(null,vals));}
   b.appendChild(optsGrid(pool.map(function(p){return p[0];}),function(i,btn,box){
@@ -665,7 +665,7 @@ t11:{g:'µ',sk:'sk11',make:function(b,api,t){
 }},
 t12:{g:'°',sk:'sk12',make:function(b,api,t){
   var raw=''+((G.batteries+vowelCount)%10)+lastDigit+((G.variant*lastDigit)%10);
-  var rev=(G.bell?1:0)+(dSum%2===0?1:0)+(t.P===1?1:0);
+  var rev=(G.bell?1:0)+(G.solved>=2?1:0)+(t.P===1?1:0);
   var code=(rev%2===1)?raw.split('').reverse().join(''):raw;
   b.appendChild(keypad(3,function(typed,ctl){
     if(typed===code){ctl.lock();api.solve();}
@@ -697,7 +697,7 @@ t14:{g:'√',sk:'sk14',make:function(b,api,t){
 }},
 t15:{g:'∞',sk:'sk15',make:function(b,api,t){
   var bits=G.digits.map(function(d){return d%2===1;});
-  var inv=(G.pen?1:0)+(lastDigit%2===1?1:0)+(t.P===2?1:0);
+  var inv=(G.pen?1:0)+(G.solved%2===0?1:0)+(t.P===2?1:0);
   if(inv%2===1)bits=bits.map(function(x){return !x;});
   b.appendChild(switches(3,function(state,btn){
     var ok=state.every(function(v,i){return v===bits[i];});
@@ -708,7 +708,7 @@ t16:{g:'≈',sk:'sk16',make:function(b,api,t){
   var o1=rnd(P),o2=rnd(P);
   function target(){
     var o=round===0?o1:o2;
-    var x=round===0?(o+G.batteries)%P:((o2-G.variant)%P+P)%P;
+    var x=round===0?(o+G.batteries)%P:((o-G.variant)%P+P)%P;
     if(G.bell)x=(P-1-x)%P;
     return x;}
   var scr=mscreen('СМЕЩЕНИЕ 1: '+o1);b.appendChild(scr);
@@ -843,7 +843,7 @@ t22:{g:'☆',sk:'sk22',make:function(b,api,t){
   var opts=shuffle([letter].concat(others));
   var lamp=el('div','morse-lamp'),alive=true;
   var seq=MORSE[letter];
-  if(firstDigit%2===1)seq=seq.split('').map(function(c){return c==='.'?'-':'.';}).join('');
+  if(realMin()%2===1)seq=seq.split('').map(function(c){return c==='.'?'-':'.';}).join('');
   if(G.coffee)seq=seq.split('').reverse().join('');
   if(t.P===3)seq=seq.split('').map(function(c){return c==='.'?'-':'.';}).join('');
   var lb=el('div','lamp-block');lb.appendChild(lamp);lb.appendChild(el('span',null,'ПЕРЕДАЧА'));
@@ -861,11 +861,12 @@ t22:{g:'☆',sk:'sk22',make:function(b,api,t){
       setTimeout(function(){lamp.classList.remove('on');i++;setTimeout(step,UNIT);},ch==='.'?UNIT:UNIT*3);})();
   })();
 }},
+/* === ИСПРАВЛЕНО: последовательность повторяется по кругу, пока модуль не решён === */
 t23:{g:'■',sk:'sk23',make:function(b,api,t){
   var ORDER=['r','y','g','b'],NAMES={r:'КРАСНЫЙ',y:'ЖЁЛТЫЙ',g:'ЗЕЛЁНЫЙ',b:'СИНИЙ'};
   var len=pick([4,5]),seq=[];for(var i=0;i<len;i++)seq.push(pick(ORDER));
   var pad=el('div','flashpad');b.appendChild(pad);
-  var shown=false,idx=0;
+  var shown=false,idx=0,alive=true;
   b.appendChild(optsGrid(ORDER.map(function(c){return '<span class="c-'+c+'">●</span> '+NAMES[c];}),function(i,btn,box){
     if(!shown)return;
     var shift=(api.strikes()+G.variant-1+t.L)%4;
@@ -874,13 +875,17 @@ t23:{g:'■',sk:'sk23',make:function(b,api,t){
     if(ORDER[i]===need){
       btn.classList.add('right');setTimeout(function(){btn.classList.remove('right');},250);
       idx++;
-      if(idx>=seq.length){box.dataset.done=1;api.solve();}
-    }else api.strike('Сбой повтора');}));
+      if(idx>=seq.length){alive=false;pad.className='flashpad';box.dataset.done=1;api.solve();}
+    }else api.strike('Сбой повтора');
+  }));
   var k=0;
   (function flash(){
-    if(k>=seq.length){pad.className='flashpad';shown=true;toast('ПОВТОРЯЙТЕ','ok');return;}
-    pad.className='flashpad f-'+seq[k];tone({r:600,y:760,g:900,b:520}[seq[k]],.18,'sine',.06);
-    setTimeout(function(){pad.className='flashpad';k++;setTimeout(flash,230);},520);})();
+    if(!alive){pad.className='flashpad';return;}
+    if(k>=seq.length){pad.className='flashpad';shown=true;k=0;setTimeout(flash,1500);return;}
+    pad.className='flashpad f-'+seq[k];
+    tone({r:600,y:760,g:900,b:520}[seq[k]],.18,'sine',.06);
+    setTimeout(function(){pad.className='flashpad';k++;setTimeout(flash,230);},520);
+  })();
 }},
 t24:{g:'□',sk:'sk24',make:function(b,api,t){
   var ROWS=[['Ω','Ψ','','λ','Σ','§','Ж','Ф'],['Ψ','Σ','Ж','Ω','Ф','λ','∆','§'],['∆','λ','Ω','§','Ж','Ψ','Ф','Σ']];
@@ -968,7 +973,7 @@ t28:{g:'▽',sk:'sk28',make:function(b,api,t){
   ds.sort(function(x,y){return x-y;});
   if(ds.length<2){var ex=(lastDigit+1)%10;if(ds.indexOf(ex)<0)ds.push(ex);ds.sort(function(x,y){return x-y;});}
   function order(){
-    var o=isVow(lastLetter)?ds.slice().reverse():ds;
+    var o=isVow(G.letters[2])?ds.slice().reverse():ds;
     var inv=(G.bell?1:0)+(G.solved%2===1?1:0)+((t.L===3||t.L===4)?1:0);
     if(inv%2===1)o=o.slice().reverse();
     return o;}
