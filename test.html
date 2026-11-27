@@ -87,6 +87,7 @@
     box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,0,0,.15)}
   .bay-label .glyph{font-family:var(--mono);font-size:15px;color:var(--sk,#333);margin-left:2px}
   .bay-label .tpl{margin-left:6px;background:linear-gradient(180deg,#d3d8dd,#aab0b7);color:#1c2126;
+  .bay-label .tpl .pips{letter-spacing:3px;color:#0d1116;font-weight:700;margin-left:3px}
     border:1px solid #878d94;border-radius:3px;padding:2px 7px;font-family:var(--mono);font-size:9px;letter-spacing:.14em}
   .bay-label .led{margin-left:auto;flex:none;width:9px;height:9px;border-radius:50%;
     background:radial-gradient(circle at 35% 30%,#ff6a5e,#8c2f27);box-shadow:0 0 8px rgba(255,60,40,.7);
@@ -635,7 +636,7 @@ t10:{g:'‡',sk:'sk10',make:function(b,api,t){
   var wires=['red','yellow','blue','green'];
   var w=1+rnd(2);for(var i=0;i<w;i++)wires.push('white');
   var keep=G.coffee?LD_COLOR[lastDigit]:(t.L===4?'white':VAR_COLOR[G.variant]);
-  var cut={},needN=wires.length-1;
+  var cut={},needN=(keep==='white')?4:wires.length-1;
   b.appendChild(wireBox(shuffle(wires),function(c,wr){
     if(b.dataset.done)return;
     if(c===keep){api.strike('Задет несущий провод');wr.classList.add('shake');setTimeout(function(){wr.classList.remove('shake');},350);return;}
@@ -1054,7 +1055,7 @@ var PLATE=['А','Б','В','Г','Д'];
 picked.forEach(function(task,i){
   var L=rnd(5),P=1+rnd(3);
   var bay=el('section','bay '+task.sk);bay.dataset.bay=String(i+1);bay.style.position='relative';
-  bay.appendChild(el('div','bay-label','МОДУЛЬ 0'+(i+1)+' <span class="glyph">'+task.g+'</span> <span class="tpl">ПЛАТА '+PLATE[L]+' · '+'•'.repeat(P)+'</span> <span class="led"></span>'));
+  bay.appendChild(el('div','bay-label','МОДУЛЬ 0'+(i+1)+' <span class="glyph">'+task.g+'</span> <span class="tpl">ПЛАТА '+PLATE[L]+': <span class="pips">'+'●'.repeat(P)+'</span></span> <span class="led"></span>'));
   bay.appendChild(el('div','solved-flag','РЕШЕНО'));
   var body=el('div','bay-body');
   var api={
